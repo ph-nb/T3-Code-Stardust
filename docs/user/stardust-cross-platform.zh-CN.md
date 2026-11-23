@@ -63,6 +63,14 @@ Android OTA 默认关闭。启用时必须同时设置 `T3CODE_MOBILE_UPDATES_EN
 
 本次在 Windows 主机完成了 Web 生产构建、Electron 与服务端 JS bundle 构建、Android Hermes bundle 和资源导出，以及 Android 原生工程生成；桌面、Web、移动端、shared、contracts、client-runtime 六个包的类型检查通过。推理滑块既有浏览器测试、更新解析、移动主题、本地消息桥接及会话统计有定向测试覆盖。
 
-当前主机未配置完整的 Rust/MSVC、JDK 和 Android SDK 构建工具链，尚未生成可安装的 EXE、AppImage 或 APK，也未完成三个平台的安装和真机运行验证。客户端验证所需的仓库 Browser / Device 工具在本会话不可用。
+原生安装包已在 GitHub Actions 构建完成：
+
+- [Windows x64 / ARM64 构建](https://github.com/ph-nb/T3-Code-Stardust/actions/runs/45189391524)：NSIS EXE，打包后完整性和原生依赖检查通过。
+- [Linux x64 / ARM64 构建](https://github.com/ph-nb/T3-Code-Stardust/actions/runs/45191680862)：AppImage 和 Debian 安装包，包含实际产物架构名 `x86_64` / `amd64` 的更新识别适配。
+- [Android APK 构建](https://github.com/ph-nb/T3-Code-Stardust/actions/runs/45184075446)：Gradle `assembleRelease` 成功，包含 ARM64、ARMv7、x86、x86_64 原生库。同一轮早期 Windows x64 检查失败已由后续 Windows 构建修复。
+
+Windows EXE 为未商业签名构建，Android APK 使用开发签名。尚未完成目标设备安装后的界面验收；客户端验证所需的仓库 Browser / Device 工具在本会话不可用。
+
+Windows x64 首次构建被文件数量检查拦截，原因是把 29 个预生成启动缓存文件计入普通文件预算。现在仅排除缓存清单声明的有效字节码文件，普通文件仍受原来的 80 个文件上限约束。修复后，97 个总文件（含 29 个缓存）和 26 个侧载原生文件均通过打包校验。
 
 额外检查发现仓库原有问题：`scripts/build-desktop-artifact.test.ts` 对 macOS preview 的 `untrusted_bundle` 断言失败（相应工作流缺少该配置），Knip 报告 18 个原有未使用文件，`scripts` 包的类型检查因迁移脚本跨项目导入、已有配置读取等错误而失败。本次未修复这些独立问题，也未宣称仓库全量检查通过。
