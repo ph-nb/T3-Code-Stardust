@@ -53,7 +53,7 @@ vp run icons:stardust
 
 ## GitHub Actions
 
-`Stardust cross-platform builds` 支持手动触发，也会在 `codex/stardust-cross-platform-ui` 分支推送代码时运行，提供 Windows x64 / ARM64、Linux x64 / ARM64 和 Android APK 五个目标。仅修改 Markdown 文档不会触发构建。结果保存为当前运行的 Actions artifacts；工作流不会创建或发布 Release。
+`Stardust cross-platform builds` 提供 Windows x64 / ARM64、Linux x64 / ARM64 和 Android APK 五个目标。手动触发时可以通过 `target` 选择 `all`、`windows`、`linux` 或 `android`；向 `codex/stardust-cross-platform-ui` 分支推送代码会重建 Windows 两种架构。仅修改 Markdown 文档不会触发构建。结果保存为当前运行的 Actions artifacts；工作流不会创建或发布 Release。
 
 工作流需先推送到自己的 GitHub 仓库，才能在 Actions 中运行。桌面更新 feed 指向 `ph-nb/T3-Code-Stardust`；本地构建可以通过 `T3CODE_DESKTOP_UPDATE_REPOSITORY` 配置。社区更新提醒仅认可当前系统和架构、文件已上传且具有 SHA256 摘要的安装包。
 

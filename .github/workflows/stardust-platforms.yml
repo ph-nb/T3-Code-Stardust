@@ -7,34 +7,30 @@ on:
     paths-ignore:
       - "**/*.md"
   workflow_dispatch:
+    inputs:
+      target:
+        description: Build targets
+        type: choice
+        default: all
+        options:
+          - all
+          - windows
+          - linux
+          - android
 
 permissions:
   contents: read
 
 jobs:
   desktop:
+    if: github.event_name == 'push' || inputs.target != 'android'
     name: Stardust ${{ matrix.platform }} ${{ matrix.arch }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: windows-2025
-            platform: win
-            arch: x64
-            target: nsis
-          - runner: windows-11-arm
-            platform: win
-            arch: arm64
-            target: nsis
-          - runner: ubuntu-24.04
-            platform: linux
-            arch: x64
-            target: AppImage
-          - runner: ubuntu-24.04-arm
-            platform: linux
-            arch: arm64
-            target: AppImage
-    runs-on: ${{ matrix.runner }}
+        platform: ${{ fromJSON((github.event_name == 'push' || inputs.target == 'windows') && '["win"]' || inputs.target == 'linux' && '["linux"]' || '["win","linux"]') }}
+        arch: [x64, arm64]
+    runs-on: ${{ matrix.platform == 'win' && (matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-2025') || (matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04') }}
     timeout-minutes: 60
     env:
       T3CODE_DESKTOP_UPDATE_REPOSITORY: ph-nb/T3-Code-Stardust
@@ -67,9 +63,9 @@ jobs:
       - name: Install Linux prerequisites
         if: matrix.platform == 'linux'
         run: sudo apt-get update && sudo apt-get install -y build-essential libsecret-1-dev pkg-config imagemagick libfuse2t64
-      - run: vp install --frozen-lockfile
+      - run: vp install --frozen-lockfile --filter=@t3tools/desktop... --filter=t3... --filter=@t3tools/scripts...
       - name: Build installer
-        run: vp run dist:desktop:artifact --platform ${{ matrix.platform }} --arch ${{ matrix.arch }} --target ${{ matrix.target }} --build-version 1.2.3
+        run: vp run dist:desktop:artifact --platform ${{ matrix.platform }} --arch ${{ matrix.arch }} --target ${{ matrix.platform == 'win' && 'nsis' || 'AppImage' }} --build-version 1.2.3
       - uses: actions/upload-artifact@v7
         with:
           name: Stardust-${{ matrix.platform }}-${{ matrix.arch }}
@@ -80,6 +76,7 @@ jobs:
             release/*.blockmap
           if-no-files-found: error
   android:
+    if: github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'android')
     name: Stardust Android APK
     runs-on: ubuntu-24.04
     timeout-minutes: 60
