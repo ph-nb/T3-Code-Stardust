@@ -130,7 +130,7 @@ const make = Effect.gen(function* () {
     FROM orchestration_v2_projection_runs r JOIN orchestration_v2_projection_threads t ON t.thread_id=r.thread_id
     WHERE r.status IN ('preparing','starting','running','waiting','queued')
     AND t.deleted_at IS NULL AND t.archived_at IS NULL
-    AND (r.status != 'queued' OR json_extract(r.payload_json, '$.queueHeld') IS NOT 1)`.pipe(
+    AND (r.status != 'queued' OR CAST(json_extract(r.payload_json, '$.queueHeld') AS BIGINT) IS DISTINCT FROM 1)`.pipe(
     Effect.orDie,
   );
   const quota = Effect.fn("ClaudeUsageProtection.quota")(function* (id: string) {

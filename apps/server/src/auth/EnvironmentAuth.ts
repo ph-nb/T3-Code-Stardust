@@ -48,7 +48,7 @@ import * as SessionStore from "./SessionStore.ts";
 import { REUSABLE_DEV_SESSION_EXPIRES_AT, resolveReusableDevAuth } from "./ReusableDevAuth.ts";
 import { verifyRequestDpopProof } from "./dpop.ts";
 import { DESKTOP_RENDERER_ORIGINS } from "../httpCors.ts";
-import * as SqlitePersistence from "../persistence/Sqlite.ts";
+import * as Database from "../persistence/Database.ts";
 import * as ManagedLimits from "../policy/managedLimits.ts";
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
 import {
@@ -1790,7 +1790,7 @@ export const layer = Layer.effect(EnvironmentAuth, make).pipe(
   Layer.provideMerge(EnvironmentAuthPolicy.layer),
 );
 
-const layerStorage = Layer.mergeAll(ServerSecretStore.layer, SqlitePersistence.layerCliConfig);
+const layerStorage = Layer.mergeAll(ServerSecretStore.layer, Database.layerCliConfig);
 
 export const layerRuntime = layer.pipe(
   Layer.provideMerge(ManagedPolicy.layer),

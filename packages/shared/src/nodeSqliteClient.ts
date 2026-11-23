@@ -40,7 +40,7 @@ export interface SqliteClientConfig {
 }
 
 // SqlClient masks transaction acquisition, so readOnly carries the caller's interruption policy.
-const ReadOnly = Context.Reference<typeof Effect.interruptible | undefined>(
+export const ReadOnly = Context.Reference<typeof Effect.interruptible | undefined>(
   "@t3tools/shared/nodeSqliteClient/ReadOnly",
   { defaultValue: () => undefined },
 );

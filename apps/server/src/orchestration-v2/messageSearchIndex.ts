@@ -3,6 +3,9 @@ import { ATTACHMENT_ONLY_BOOTSTRAP_PROMPT } from "@t3tools/shared/composerContex
 import * as Effect from "effect/Effect";
 import type * as SqlClient from "effect/sql/SqlClient";
 
+// SQLite migration tooling imports this module outside the server project.
+const isPostgres = (sql: SqlClient.SqlClient) => sql.driver === "pg" || sql.driver === "pglite";
+
 // SQLite's ltrim needs the characters matched by isAttachmentOnlyBootstrapPrompt's \s explicitly.
 const BOOTSTRAP_PREFIX_WHITESPACE =
   "\t\n\v\f\r \u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff";
@@ -10,10 +13,10 @@ const BOOTSTRAP_PREFIX_WHITESPACE =
 export const nonPlaceholderMessageCondition = (sql: SqlClient.SqlClient, row = "messages") =>
   sql.literal(`
   CASE
-    WHEN substr(json_extract(${row}.payload_json, '$.text'), 1, 11) = 'Ultrathink:' COLLATE NOCASE
+    WHEN lower(substr(json_extract(${row}.payload_json, '$.text'), 1, 11)) = 'ultrathink:'
       THEN ltrim(substr(json_extract(${row}.payload_json, '$.text'), 12), '${BOOTSTRAP_PREFIX_WHITESPACE}')
     ELSE json_extract(${row}.payload_json, '$.text')
-  END COLLATE BINARY <> '${ATTACHMENT_ONLY_BOOTSTRAP_PROMPT.replaceAll("'", "''")}'
+  END ${isPostgres(sql) ? 'COLLATE "C"' : "COLLATE BINARY"} <> '${ATTACHMENT_ONLY_BOOTSTRAP_PROMPT.replaceAll("'", "''")}'
 `);
 
 /**
@@ -120,11 +123,11 @@ export const createMessageSearchTriggers = Effect.fn("MessageSearchIndex.createT
       AFTER UPDATE ON orchestration_v2_projection_messages
       WHEN (old.streaming = 0 OR new.streaming = 0)
         AND (
-          old.streaming IS NOT new.streaming
-          OR old.role IS NOT new.role
-          OR ${text("old")} IS NOT ${text("new")}
+          old.streaming IS DISTINCT FROM new.streaming
+          OR old.role IS DISTINCT FROM new.role
+          OR ${text("old")} IS DISTINCT FROM ${text("new")}
           OR json_extract(old.payload_json, '$.createdBy')
-            IS NOT json_extract(new.payload_json, '$.createdBy')
+            IS DISTINCT FROM json_extract(new.payload_json, '$.createdBy')
         )
       BEGIN
         DELETE FROM orchestration_v2_message_search WHERE rowid = old.rowid AND old.streaming = 0;
@@ -148,6 +151,7 @@ export const createMessageSearchTriggers = Effect.fn("MessageSearchIndex.createT
 /** Replaces the search triggers with their current definition, where the index exists. */
 export const recreateMessageSearchTriggers = Effect.fn("MessageSearchIndex.recreateTriggers")(
   function* (sql: SqlClient.SqlClient) {
+    if (isPostgres(sql)) return;
     const index = yield* sql`
       SELECT 1 FROM sqlite_master WHERE name = 'orchestration_v2_message_search'
     `;
@@ -168,6 +172,10 @@ export const recreateMessageSearchTriggers = Effect.fn("MessageSearchIndex.recre
 export const rebuildMessageSearch = Effect.fn("MessageSearchIndex.rebuild")(function* (
   sql: SqlClient.SqlClient,
 ) {
+  if (isPostgres(sql)) {
+    yield* sql`REINDEX INDEX orchestration_v2_messages_text_trgm_idx`;
+    return;
+  }
   const index = yield* sql`
     SELECT 1 FROM sqlite_master WHERE name = 'orchestration_v2_message_search'
   `;

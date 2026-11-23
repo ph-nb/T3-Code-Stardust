@@ -1,3 +1,4 @@
+import { indexedBy, isPostgres } from "./SqlDialect.ts";
 import {
   ApplicationEventMetadata,
   ApplicationProjectEvent,
@@ -301,7 +302,7 @@ const makeEventStore = Effect.gen(function* () {
       '$.prompt',
       (SELECT json_extract(anchor.payload_json, '$.prompt')
        FROM orchestration_events AS anchor
-       WHERE anchor.sequence = json_extract(orchestration_events.payload_json, '$.promptSequence'))
+       WHERE anchor.sequence = CAST(json_extract(orchestration_events.payload_json, '$.promptSequence') AS BIGINT))
     )
     ELSE orchestration_events.payload_json
   END`;
@@ -382,6 +383,7 @@ const makeEventStore = Effect.gen(function* () {
           : { ...event.payload, projectIcon: encodeProjectIcon(event.payload.projectIcon) },
       metadataJson: event.metadata,
     }).pipe(
+      (effect) => (isPostgres(sql) ? sql.withTransaction(effect) : effect),
       Effect.flatMap((row) => decodeProjectEvent(row)),
       Effect.mapError(
         toPersistenceSqlOrDecodeError(
@@ -418,10 +420,10 @@ const makeEventStore = Effect.gen(function* () {
       ${
         // Otherwise the sequence index wins and command lookups scan every V2 event.
         input.commandId !== undefined
-          ? sql`INDEXED BY idx_orch_events_command_id`
+          ? indexedBy(sql, "idx_orch_events_command_id")
           : input.onlyAgentEvents === true
             ? sql``
-            : sql`INDEXED BY idx_orchestration_events_application_high_water`
+            : indexedBy(sql, "idx_orchestration_events_application_high_water")
       }
       WHERE sequence > ${input.afterSequence}
         AND sequence <= ${input.throughSequence ?? Number.MAX_SAFE_INTEGER}
@@ -535,6 +537,7 @@ const makeEventStore = Effect.gen(function* () {
         }),
       { concurrency: 1 },
     ).pipe(
+      (effect) => (isPostgres(sql) ? sql.withTransaction(effect) : effect),
       Effect.mapError(
         toPersistenceSqlOrDecodeError(
           "OrchestrationEventStore.appendAgentEvents:insert",
@@ -601,7 +604,7 @@ const makeEventStore = Effect.gen(function* () {
       SELECT
         COUNT(*) AS "eventCount",
         COALESCE(SUM(octet_length(payload_json)), 0) AS "rawPayloadBytes",
-        COALESCE(MAX(event_type = 'thread.created'), 0) AS "hasCreateEvent"
+        COALESCE(MAX(CASE WHEN event_type = 'thread.created' THEN 1 ELSE 0 END), 0) AS "hasCreateEvent"
       FROM (
         SELECT ${restoredPayloadJson} AS payload_json, event_type
         FROM orchestration_events
@@ -628,7 +631,7 @@ const makeEventStore = Effect.gen(function* () {
       SELECT
         COUNT(*) AS "eventCount",
         COALESCE(SUM(octet_length(${restoredPayloadJson})), 0) AS "rawPayloadBytes"
-      FROM orchestration_events INDEXED BY idx_orchestration_events_application_high_water
+      FROM orchestration_events ${indexedBy(sql, "idx_orchestration_events_application_high_water")}
       WHERE sequence > ${input.afterSequence}
         AND sequence <= ${input.throughSequence}
         AND (
@@ -653,8 +656,8 @@ const makeEventStore = Effect.gen(function* () {
       ${
         threadId === undefined
           ? // The planner can otherwise pick the covering stream index and scan every agent event.
-            sql`INDEXED BY idx_orchestration_events_application_sequence`
-          : sql`INDEXED BY idx_orchestration_events_agent_stream_sequence`
+            indexedBy(sql, "idx_orchestration_events_application_sequence")
+          : indexedBy(sql, "idx_orchestration_events_agent_stream_sequence")
       }
       WHERE application_event_version = 2
         AND aggregate_kind = 'thread'
@@ -668,7 +671,7 @@ const makeEventStore = Effect.gen(function* () {
   // The OR planner otherwise scans every V2 event instead of seeking the final sequence.
   const latestApplicationSequence = sql<{ readonly sequence: number | null }>`
     SELECT MAX(sequence) AS sequence
-    FROM orchestration_events INDEXED BY idx_orchestration_events_application_high_water
+    FROM orchestration_events ${indexedBy(sql, "idx_orchestration_events_application_high_water")}
     WHERE aggregate_kind = 'project'
       OR (application_event_version = 2 AND aggregate_kind = 'thread')
   `.pipe(

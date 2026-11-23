@@ -8,6 +8,7 @@ import * as Result from "effect/Result";
 import * as Schema from "effect/Schema";
 import * as Struct from "effect/Struct";
 import * as SqlClient from "effect/sql/SqlClient";
+import { jsonValue } from "./SqlDialect.ts";
 import * as SqlSchema from "effect/sql/SqlSchema";
 
 import {
@@ -194,7 +195,7 @@ export const make = Effect.gen(function* () {
                 ELSE '{}'
               END,
               '$.importedTranscripts',
-              json_extract(provider_session_runtime.runtime_payload_json, '$.importedTranscripts')
+              ${jsonValue(sql, sql`provider_session_runtime.runtime_payload_json`, "$.importedTranscripts")}
             )
             ELSE excluded.runtime_payload_json
           END
@@ -267,9 +268,9 @@ export const make = Effect.gen(function* () {
                 WHERE CASE
                   WHEN type = 'object' THEN
                     json_extract(value, '$.providerInstanceId')
-                      IS NOT json_extract(${source}, '$.providerInstanceId')
-                    OR json_extract(value, '$.filePath') IS NOT json_extract(${source}, '$.filePath')
-                  ELSE 0
+                      IS DISTINCT FROM json_extract(${source}, '$.providerInstanceId')
+                    OR json_extract(value, '$.filePath') IS DISTINCT FROM json_extract(${source}, '$.filePath')
+                  ELSE false
                 END
                 UNION ALL
                 SELECT ${source} AS value

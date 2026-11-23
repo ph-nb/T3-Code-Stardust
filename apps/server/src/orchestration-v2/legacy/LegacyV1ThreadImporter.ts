@@ -33,6 +33,7 @@ import * as Schema from "effect/Schema";
 import * as SqlClient from "effect/sql/SqlClient";
 
 import * as EventSink from "../EventSink.ts";
+import { indexedBy, isPostgres } from "../../persistence/SqlDialect.ts";
 import { randomUuidV4 } from "@t3tools/provider-core/server/randomUuid";
 
 const IMPORT_EVENT_PREFIX = "migration:v1";
@@ -462,7 +463,7 @@ const make = Effect.gen(function* () {
         thread.pinned_at,
         thread.auto_settle_disabled_at,
         thread.pin_order_key,
-        (SELECT json_group_array(json_object('host', pr.host, 'repository', pr.repository, 'number', pr.number, 'url', pr.url, 'source', pr.source, 'linkedAt', pr.linked_at, 'snapshot', json(pr.snapshot_json), 'stack', json(pr.stack_json))) FROM projection_thread_pull_requests pr WHERE pr.thread_id = thread.thread_id) AS pull_requests_json,
+        (SELECT json_group_array(${sql.literal(isPostgres(sql) ? "jsonb_build_object" : "json_object")}('host', pr.host, 'repository', pr.repository, 'number', pr.number, 'url', pr.url, 'source', pr.source, 'linkedAt', pr.linked_at, 'snapshot', json(pr.snapshot_json), 'stack', json(pr.stack_json))) FROM projection_thread_pull_requests pr WHERE pr.thread_id = thread.thread_id) AS pull_requests_json,
         thread.linked_pull_request_json,
         thread.branch_pull_request_json,
         thread.active_order_key,
@@ -566,7 +567,7 @@ const make = Effect.gen(function* () {
         thread.pinned_at,
         thread.auto_settle_disabled_at,
         thread.pin_order_key,
-        (SELECT json_group_array(json_object('host', pr.host, 'repository', pr.repository, 'number', pr.number, 'url', pr.url, 'source', pr.source, 'linkedAt', pr.linked_at, 'snapshot', json(pr.snapshot_json), 'stack', json(pr.stack_json))) FROM projection_thread_pull_requests pr WHERE pr.thread_id = thread.thread_id) AS pull_requests_json,
+        (SELECT json_group_array(${sql.literal(isPostgres(sql) ? "jsonb_build_object" : "json_object")}('host', pr.host, 'repository', pr.repository, 'number', pr.number, 'url', pr.url, 'source', pr.source, 'linkedAt', pr.linked_at, 'snapshot', json(pr.snapshot_json), 'stack', json(pr.stack_json))) FROM projection_thread_pull_requests pr WHERE pr.thread_id = thread.thread_id) AS pull_requests_json,
         thread.linked_pull_request_json,
         thread.branch_pull_request_json,
         thread.active_order_key,
@@ -574,7 +575,7 @@ const make = Effect.gen(function* () {
       FROM projection_threads AS thread
       WHERE NOT EXISTS (
         SELECT 1
-        FROM orchestration_events AS event INDEXED BY orchestration_events_v2_created_threads_idx
+        FROM orchestration_events AS event ${indexedBy(sql, "orchestration_events_v2_created_threads_idx")}
         WHERE event.application_event_version = 2
           AND event.aggregate_kind = 'thread'
           AND event.stream_id = thread.thread_id
@@ -665,7 +666,7 @@ const make = Effect.gen(function* () {
       FROM projection_threads AS thread
       WHERE NOT EXISTS (
         SELECT 1
-        FROM orchestration_events AS event INDEXED BY orchestration_events_v2_created_threads_idx
+        FROM orchestration_events AS event ${indexedBy(sql, "orchestration_events_v2_created_threads_idx")}
         WHERE event.application_event_version = 2
           AND event.aggregate_kind = 'thread'
           AND event.stream_id = thread.thread_id
@@ -707,7 +708,7 @@ const make = Effect.gen(function* () {
         // Hint the index to skip V1 events without scanning their payloads.
         const existingRows = yield* sql<{ readonly event_id: string }>`
           SELECT event_id
-          FROM orchestration_events INDEXED BY idx_orchestration_events_agent_stream_sequence
+          FROM orchestration_events ${indexedBy(sql, "idx_orchestration_events_agent_stream_sequence")}
           WHERE application_event_version = 2
             AND aggregate_kind = 'thread'
             AND stream_id = ${threadId}

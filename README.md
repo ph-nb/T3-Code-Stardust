@@ -29,6 +29,8 @@
 
 本仓库已加入 **Windows、Linux 和 Android 的 UI 源码适配与构建入口**。桌面共用新版 Stardust 界面，Android 使用原生布局适配星舰推理滑块、配色和额度圆环。安装包与验证状态、构建命令见 [跨平台移植与构建说明](docs/user/stardust-cross-platform.zh-CN.md)。下方现有下载链接仍是原作者发布的 macOS 安装包。
 
+Linux 单实例服务端支持 **PostgreSQL 持久化 + Redis 缓存**，提供带校验和回滚副本的 SQLite 离线迁移命令。部署、缓存分层、备份和回滚边界见 [Linux 服务端存储说明](docs/operations/linux-postgres-redis.md)。
+
 <a id="highlights"></a>
 
 ## 核心亮点与动效实录

@@ -66,7 +66,9 @@ import * as IssueService from "./issue/IssueService.ts";
 import * as IssueTrackerConnections from "./issue/IssueTrackerConnections.ts";
 import * as IssueTrackerBindings from "./persistence/IssueTrackerBindings.ts";
 import * as IssueTrackerRegistry from "./issue/IssueTrackerRegistry.ts";
-import * as SqlitePersistence from "./persistence/Sqlite.ts";
+import * as Database from "./persistence/Database.ts";
+import * as Postgres from "./persistence/Postgres.ts";
+import * as StorageConfig from "./persistence/StorageConfig.ts";
 import * as PullRequestFilesViewed from "./persistence/PullRequestFilesViewed.ts";
 import * as PullRequestReviewGuides from "./persistence/PullRequestReviewGuides.ts";
 import * as PullRequestReviewGuideService from "./pullRequest/PullRequestReviewGuideService.ts";
@@ -295,7 +297,7 @@ const layerPtyAdapter = NodePtyAdapter.layer;
 const layerServerSettings = ServerSettings.layer.pipe(
   Layer.provide(ServerSecretStore.layer),
   Layer.provideMerge(ManagedPolicy.layer),
-  Layer.provideMerge(SqlitePersistence.layerConfig),
+  Layer.provideMerge(Database.layerConfig),
 );
 
 const layerNativeTelemetry = NativeTelemetryClient.layer.pipe(
@@ -421,7 +423,7 @@ const layerPlatformServices = DocumentText.layer.pipe(
   Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, layerSpawner)),
 );
 
-const layerPersistence = Layer.empty.pipe(Layer.provideMerge(SqlitePersistence.layerConfig));
+const layerPersistence = Layer.empty.pipe(Layer.provideMerge(Database.layerConfig));
 
 const layerVcsDriverRegistry = VcsDriverRegistry.layer.pipe(Layer.provide(VcsProjectConfig.layer));
 
@@ -790,7 +792,7 @@ const layerRuntimeCoreDependenciesBase = Layer.mergeAll(
   Layer.provideMerge(Layer.mergeAll(Keybindings.layer, UsageLimitSources.layer)),
   Layer.provideMerge(ProviderRegistry.layer),
   Layer.provideMerge(
-    ProviderInstanceRegistryHydration.layer.pipe(Layer.provide(SqlitePersistence.layerConfig)),
+    ProviderInstanceRegistryHydration.layer.pipe(Layer.provide(Database.layerConfig)),
   ),
   // One gate for the server, below hydration so the Claude adapter sees it: layers memoize by
   // reference, so the runtime layer shares it.
@@ -1436,7 +1438,19 @@ const layerMakeServer = Layer.unwrap(
   }),
 ).pipe(Layer.provide(ProcessRunner.layer));
 
-export const runServer = Layer.launch(
+const launchServer = Layer.launch(
   // For the layers above whose spawner requirement is not met by one of them.
   layerMakeServer.pipe(Layer.provide(NonBlockingSpawner.layer.pipe(Layer.provide(layerSpawner)))),
+);
+
+export const runServer = Effect.scoped(
+  Effect.gen(function* () {
+    const storage = yield* StorageConfig.make();
+    if (storage.backend !== "postgres") return yield* launchServer;
+    const lost = yield* Postgres.holdOwnership({
+      url: storage.postgresUrl!,
+      schema: storage.schema,
+    }).pipe(Effect.provide(NodeCrypto.layer));
+    return yield* Effect.raceFirst(launchServer, lost);
+  }),
 );

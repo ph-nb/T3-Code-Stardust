@@ -372,7 +372,7 @@ export const make = Effect.gen(function* () {
         WHERE session_id = ${sessionId}
           AND revoked_at IS NULL
           AND expires_at > ${now}
-          AND (${onlyIfExpiresBy ?? null} IS NULL OR expires_at <= ${onlyIfExpiresBy ?? null})
+          AND (CAST(${onlyIfExpiresBy ?? null} AS TEXT) IS NULL OR expires_at <= ${onlyIfExpiresBy ?? null})
         RETURNING session_id AS "sessionId"
       `,
   });

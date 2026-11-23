@@ -198,7 +198,7 @@ export const make = Effect.gen(function* () {
                 THEN projection_projects.title
               ELSE excluded.title
             END,
-            has_custom_title = MAX(projection_projects.has_custom_title, excluded.has_custom_title),
+            has_custom_title = CASE WHEN projection_projects.has_custom_title = 1 THEN 1 ELSE excluded.has_custom_title END,
             workspace_root = excluded.workspace_root,
             default_model_selection_json = excluded.default_model_selection_json,
             default_thread_env_mode = excluded.default_thread_env_mode,

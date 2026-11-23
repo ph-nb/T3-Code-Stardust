@@ -1,4 +1,5 @@
 import * as SpotlightSearch from "./SpotlightSearch.ts";
+import { isPostgres } from "../persistence/SqlDialect.ts";
 import {
   IsoDateTime,
   MessageId,
@@ -81,6 +82,8 @@ const SearchRequest = Schema.Struct({
   /** Threads the caller already lists, left out before the hit limit. */
   excludedThreadIds: TokenList,
 });
+const decodeSubstrings = Schema.decodeSync(SearchRequest.fields.substrings);
+const decodeShortSpellings = Schema.decodeSync(SearchRequest.fields.shortSpellings);
 const SearchRow = Schema.Struct({
   messageRowid: Schema.Number,
   messageId: MessageId,
@@ -218,10 +221,57 @@ export function buildSearchSnippet(text: string, matchStart: number): string {
 // Both paths narrow ASCII tokens with Latin-1 and Extended-A/B/Additional accent variants.
 // Without FTS5 trigrams, or for two-character CJK words, scan the same eligible messages;
 // accented queries and non-Latin case can still miss: "fermée"/"fermee", "ОШИБКА"/"ошибка".
+const messageHitsPostgres = (
+  sql: SqlClient.SqlClient,
+  { substrings, shortSpellings, projectId, excludedThreadIds }: typeof SearchRequest.Encoded,
+) => {
+  const tokens = decodeSubstrings(substrings);
+  const short = decodeShortSpellings(shortSpellings);
+  const likeEscape = String.fromCharCode(92);
+  const pattern = (token: string) =>
+    `%${foldSearchQuery(token)
+      .replaceAll(likeEscape, likeEscape + likeEscape)
+      .replaceAll("%", likeEscape + "%")
+      .replaceAll("_", likeEscape + "_")}%`;
+  const text = sql`stardust_search_fold(COALESCE(messages.search_text, json_extract(messages.payload_json, '$.text')))`;
+  return sql`
+    SELECT messages.rowid AS "messageRowid", messages.message_id AS "messageId",
+      messages.thread_id AS "threadId", threads.project_id AS "projectId", messages.role AS source,
+      ${messageSearchText(sql)} AS text, messages.created_at AS "messageCreatedAt"
+    FROM orchestration_v2_projection_messages AS messages
+    INNER JOIN orchestration_v2_projection_threads AS threads ON threads.thread_id = messages.thread_id
+    INNER JOIN projection_projects AS projects ON projects.project_id = threads.project_id
+    WHERE threads.deleted_at IS NULL AND threads.archived_at IS NULL AND projects.deleted_at IS NULL
+      AND (${projectId}::text IS NULL OR threads.project_id = ${projectId})
+      AND threads.thread_id NOT IN (SELECT value FROM json_each(${excludedThreadIds}))
+      AND json_extract(threads.payload_json, '$.lineage.relationshipToParent') IS DISTINCT FROM 'subagent'
+      AND CAST(json_extract(threads.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
+      AND ${indexedMessageCondition(sql)}
+      AND ${sql.and(tokens.map(({ token }) => sql`${text} LIKE ${pattern(token)} ESCAPE ${likeEscape}`))}
+      AND ${sql.and(short.map((spellings) => sql.or(spellings.map((token) => sql`${text} LIKE ${pattern(token)} ESCAPE ${likeEscape}`))))}
+      AND messages.message_id NOT LIKE 'async-answer:%'
+      AND NOT EXISTS (
+        SELECT 1 FROM orchestration_v2_projection_runs AS runs
+        WHERE runs.run_id = messages.run_id AND (
+          runs.status = 'rolled_back' OR (runs.status = 'cancelled' AND NOT EXISTS (
+            SELECT 1 FROM orchestration_v2_projection_turn_items AS items
+            WHERE items.run_id = runs.run_id
+              AND json_extract(items.payload_json, '$.messageId') = messages.message_id
+              AND json_extract(items.payload_json, '$.inputIntent') IS DISTINCT FROM 'queued_turn'
+          ))
+        )
+      )
+    ORDER BY messages.rowid DESC LIMIT ${MESSAGE_HIT_LIMIT}
+  `;
+};
+
 export const messageHitsQuery = (
   sql: SqlClient.SqlClient,
   { match, substrings, shortSpellings, projectId, excludedThreadIds }: typeof SearchRequest.Encoded,
-) => sql`
+) =>
+  isPostgres(sql)
+    ? messageHitsPostgres(sql, { match, substrings, shortSpellings, projectId, excludedThreadIds })
+    : sql`
     WITH eligible AS MATERIALIZED (
       SELECT threads.thread_id, threads.project_id
       FROM orchestration_v2_projection_threads AS threads
@@ -230,11 +280,11 @@ export const messageHitsQuery = (
       WHERE threads.deleted_at IS NULL
         AND threads.archived_at IS NULL
         AND projects.deleted_at IS NULL
-        AND (${projectId} IS NULL OR threads.project_id = ${projectId})
+        AND (CAST(${projectId} AS TEXT) IS NULL OR threads.project_id = ${projectId})
         AND threads.thread_id NOT IN (SELECT value FROM json_each(${excludedThreadIds}))
         AND json_extract(threads.payload_json, '$.lineage.relationshipToParent')
-          IS NOT 'subagent'
-        AND json_extract(threads.payload_json, '$.lineage.sideChat') IS NOT 1
+          IS DISTINCT FROM 'subagent'
+        AND CAST(json_extract(threads.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
     )
     ${
       match === null
@@ -294,7 +344,7 @@ export const messageHitsQuery = (
                 SELECT 1 FROM orchestration_v2_projection_turn_items AS items
                 WHERE items.run_id = runs.run_id
                   AND json_extract(items.payload_json, '$.messageId') = messages.message_id
-                  AND json_extract(items.payload_json, '$.inputIntent') IS NOT 'queued_turn'
+                  AND json_extract(items.payload_json, '$.inputIntent') IS DISTINCT FROM 'queued_turn'
               )
             )
           )
@@ -426,9 +476,9 @@ export const make = Effect.gen(function* () {
         AND threads.archived_at IS NULL
         AND projects.deleted_at IS NULL
         AND json_extract(threads.payload_json, '$.lineage.relationshipToParent')
-          IS NOT 'subagent'
-        AND json_extract(threads.payload_json, '$.lineage.sideChat') IS NOT 1
-        AND (${projectId} IS NULL OR threads.project_id = ${projectId})
+          IS DISTINCT FROM 'subagent'
+        AND CAST(json_extract(threads.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
+        AND (CAST(${projectId} AS TEXT) IS NULL OR threads.project_id = ${projectId})
     `,
   });
 
@@ -457,11 +507,11 @@ export const make = Effect.gen(function* () {
         AND threads.archived_at IS NULL
         AND projects.deleted_at IS NULL
         AND json_extract(threads.payload_json, '$.lineage.relationshipToParent')
-          IS NOT 'subagent'
-        AND json_extract(threads.payload_json, '$.lineage.sideChat') IS NOT 1
+          IS DISTINCT FROM 'subagent'
+        AND CAST(json_extract(threads.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
         AND json_extract(threads.payload_json, '$.settledOverride') = 'settled'
         AND json_extract(threads.payload_json, '$.settledAt') < ${before}
-        AND (${projectIds} IS NULL
+        AND (CAST(${projectIds} AS TEXT) IS NULL
           OR threads.project_id IN (SELECT value FROM json_each(${projectIds})))
     `,
   });
@@ -480,11 +530,11 @@ export const make = Effect.gen(function* () {
         AND threads.deleted_at IS NULL
         AND threads.archived_at IS NULL
         AND json_extract(threads.payload_json, '$.lineage.relationshipToParent')
-          IS NOT 'subagent'
-        AND json_extract(threads.payload_json, '$.lineage.sideChat') IS NOT 1
+          IS DISTINCT FROM 'subagent'
+        AND CAST(json_extract(threads.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
         AND json_extract(threads.payload_json, '$.settledOverride') = 'settled'
         AND json_extract(threads.payload_json, '$.settledAt') < ${before}
-        AND (${projectIds} IS NULL
+        AND (CAST(${projectIds} AS TEXT) IS NULL
           OR threads.project_id IN (SELECT value FROM json_each(${projectIds})))
     `,
   });
@@ -531,7 +581,9 @@ export const make = Effect.gen(function* () {
       newer(left, right);
     const rows = yield* read(
       Effect.gen(function* () {
-        const index = yield* sql`
+        const index = isPostgres(sql)
+          ? []
+          : yield* sql`
           SELECT 1 FROM sqlite_master WHERE name = 'orchestration_v2_message_search'
         `;
         const messageSearch = buildMessageSearch(input.query, index.length > 0);
@@ -605,7 +657,7 @@ export const make = Effect.gen(function* () {
   });
 
   const search: ThreadSearch["Service"]["search"] = (input) =>
-    input.searchMode === "spotlight" && spotlight
+    input.searchMode === "spotlight" && spotlight && !isPostgres(sql)
       ? spotlight
           .search(input.query, input.limit ?? 50)
           .pipe(Effect.mapError((cause) => new ThreadSearchError({ operation: "query", cause })))

@@ -145,8 +145,8 @@ export const readUsageThroughput = Effect.fn("UsageThroughput.read")(
         ps.model
       ) AS "model",
       json_extract(turn.payload_json, '$.turnTokenUsage.usageStatus') AS "usageStatus",
-      json_extract(turn.payload_json, '$.turnTokenUsage.localCommand') AS "localCommand",
-      json_extract(turn.payload_json, '$.turnTokenUsage.outputTokens') AS "outputTokens"
+      CAST(json_extract(turn.payload_json, '$.turnTokenUsage.localCommand') AS BIGINT) AS "localCommand",
+      CAST(json_extract(turn.payload_json, '$.turnTokenUsage.outputTokens') AS BIGINT) AS "outputTokens"
     FROM orchestration_v2_projection_provider_turns AS turn
     LEFT JOIN orchestration_v2_projection_provider_threads AS pt
       ON pt.provider_thread_id = turn.provider_thread_id

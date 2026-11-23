@@ -22,6 +22,9 @@ import * as Persistable from "effect/persistence/Persistable";
 import * as PersistedCache from "effect/persistence/PersistedCache";
 import * as Persistence from "effect/persistence/Persistence";
 import * as ServerConfig from "../config.ts";
+import * as StorageConfig from "../persistence/StorageConfig.ts";
+import * as RedisKeyValueStore from "../persistence/RedisKeyValueStore.ts";
+import * as ServerEnvironment from "../environment/ServerEnvironment.ts";
 import { detachStackFrame } from "../git/detachStackFrame.ts";
 import { forkParked } from "../serverActivation.ts";
 
@@ -37,6 +40,12 @@ const ENTRY_FILE_NAME = new RegExp(`^${STORE_ID}(?:%3A)?[0-9a-f]{64}$`);
  * clock changes.
  */
 const ENTRY_FILE_MAX_AGE = Duration.days(1);
+const VolatileBacking = Context.Reference<boolean>(
+  "t3/pullRequest/PullRequestReadCache/VolatileBacking",
+  {
+    defaultValue: () => false,
+  },
+);
 type ReadError = PullRequestOperationError | PullRequestUnavailableError;
 const revisionCodec = Schema.fromJsonString(
   Schema.Record(
@@ -88,6 +97,8 @@ export const make = Effect.gen(function* () {
   const digester = yield* Digest.Digest;
   const clock = yield* Clock.Clock;
   let enabled = true;
+  let generation = 0;
+  const volatile = yield* VolatileBacking;
   const lock = yield* Semaphore.make(CONCURRENT_READS);
   const stripes = yield* Effect.forEach(Array.from({ length: SCOPE_STRIPES }), () =>
     Semaphore.make(CONCURRENT_READS),
@@ -158,7 +169,11 @@ export const make = Effect.gen(function* () {
             return value !== undefined && value.expiresAt > now ? value.revision : "";
           })
           .join(":");
-        const request = new Read({ key: yield* digest(key), revision, lookup: read });
+        const request = new Read({
+          key: yield* digest(generation === 0 ? key : `${generation}:${key}`),
+          revision,
+          lookup: read,
+        });
         const stored = yield* cache.get(request);
         return (
           request.matchesRevision(stored.revision) ? stored : yield* Cache.get(refreshes, request)
@@ -191,6 +206,15 @@ export const make = Effect.gen(function* () {
         yield* Cache.set(revisions, undefined, next);
       },
       Effect.catch(() => {
+        if (volatile) {
+          // A new key generation fences entries whose invalidation Redis could not persist.
+          generation++;
+          return Cache.set(revisions, undefined, {}).pipe(
+            Effect.andThen(
+              Effect.logWarning("PR cache generation changed after Redis invalidation failed"),
+            ),
+          );
+        }
         enabled = false;
         return Effect.logWarning("PR cache disabled after clearing failed");
       }),
@@ -201,6 +225,8 @@ export const make = Effect.gen(function* () {
     ),
   });
 });
+
+export const makeRedis = make.pipe(Effect.provideService(VolatileBacking, true));
 
 /**
  * The persisted cache drops an expired entry only when it is read again, so
@@ -237,6 +263,43 @@ export const pruneExpiredEntryFiles = Effect.fn("PullRequestReadCache.pruneExpir
 export const layer = Layer.unwrap(
   Effect.gen(function* () {
     const config = yield* ServerConfig.ServerConfig;
+    const storage = yield* StorageConfig.make();
+    if (storage.backend === "postgres" && storage.redisUrl !== undefined) {
+      const identity = yield* ServerEnvironment.ServerEnvironmentIdentity;
+      const environmentId = yield* identity.getEnvironmentId;
+      const digest = yield* Digest.Digest;
+      const random = yield* SecureRandom.SecureRandom;
+      const namespace = Hex.encode(
+        yield* digest.digest(Digest.sha256, new TextEncoder().encode(environmentId)),
+      );
+      const bootId = yield* random.uuidV4();
+      return Layer.effect(PullRequestReadCache, makeRedis).pipe(
+        Layer.provide(
+          Layer.effect(
+            KeyValueStore.KeyValueStore,
+            RedisKeyValueStore.make({
+              url: storage.redisUrl,
+              namespace: `${storage.cacheNamespace}:${namespace}:pr:${bootId}`,
+              ttlSeconds: storage.cacheTtlSeconds,
+              maxBytes: storage.cacheMaxBytes,
+            }),
+          ),
+        ),
+      );
+    }
+    if (storage.backend === "postgres") {
+      const backing = KeyValueStore.makeStringOnly({
+        get: () => Effect.undefined,
+        set: () => Effect.void,
+        remove: () => Effect.void,
+        keys: Effect.succeed([]),
+        size: Effect.succeed(0),
+        clear: Effect.void,
+      });
+      return Layer.effect(PullRequestReadCache, make).pipe(
+        Layer.provide(Layer.succeed(KeyValueStore.KeyValueStore, backing)),
+      );
+    }
     const path = yield* Path.Path;
     const directory = path.join(config.providerStatusCacheDir, "pull-requests");
     return Layer.effect(PullRequestReadCache, make).pipe(
@@ -262,4 +325,4 @@ export const layer = Layer.unwrap(
       ),
     );
   }),
-);
+).pipe(Layer.provide(ServerEnvironment.layerIdentity));

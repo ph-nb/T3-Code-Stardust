@@ -507,7 +507,7 @@ const layerBase: Layer.Layer<
               FROM orchestration_v2_projection_provider_threads
               WHERE driver = ${imported.driver}
                 AND provider_instance_id = ${imported.providerInstanceId}
-                AND thread_id IS NOT ${imported.appThreadId}
+                AND thread_id IS DISTINCT FROM ${imported.appThreadId}
                 AND json_extract(payload_json, '$.nativeThreadRef.nativeId') = ${imported.nativeThreadRef.nativeId}
               LIMIT 1
             `;
