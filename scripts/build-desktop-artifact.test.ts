@@ -77,6 +77,7 @@ import * as HostProcess from "@t3tools/shared/HostProcess";
 import { symlinksSupported } from "@t3tools/shared/testing/symlinks";
 
 const encodeModuleUrl = Schema.encodeEffect(Schema.fromJsonString(Schema.String));
+const encodeFixtureJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 const decodePackageVersion = Schema.decodeUnknownEffect(
   Schema.fromJsonString(Schema.Struct({ version: Schema.String })),
 );
@@ -965,6 +966,22 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
         const fixture = yield* makeWindowsPayloadFixture({ copyUnpackedNatives: true });
+        const cacheDir = path.join(fixture.packagedAppDir, "resources/server-compile-cache");
+        yield* fs.makeDirectory(cacheDir, { recursive: true });
+        const cacheEntries = Array.from({ length: 100 }, (_, index) => ({
+          module: `server.asar/apps/server/dist/cache-${index}.mjs`,
+          file: index.toString(16).padStart(8, "0"),
+        }));
+        for (const entry of cacheEntries)
+          yield* fs.writeFileString(path.join(cacheDir, entry.file), "bytecode");
+        yield* fs.writeFileString(
+          path.join(cacheDir, "manifest.json"),
+          yield* encodeFixtureJson({
+            format: 1,
+            runtime: "fixture",
+            entries: cacheEntries,
+          }),
+        );
         const result = yield* validateWindowsPackagedPayload({
           stageDistDir: fixture.stageDistDir,
           appExecutableName: fixture.appExecutableName,
@@ -985,7 +1002,12 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
 
         assert.equal(result.packagedAppDir, fixture.packagedAppDir);
         assert.deepStrictEqual(result.unpackedFiles, ["node_modules/native/addon.node"]);
-        assert.isBelow(result.fileCount, WINDOWS_PACKAGED_PAYLOAD_FILE_LIMIT);
+        assert.isAbove(result.fileCount, WINDOWS_PACKAGED_PAYLOAD_FILE_LIMIT);
+        assert.equal(result.preparedCacheFileCount, cacheEntries.length + 1);
+        assert.isBelow(
+          result.fileCount - result.preparedCacheFileCount,
+          WINDOWS_PACKAGED_PAYLOAD_FILE_LIMIT,
+        );
         assert.deepStrictEqual(secondAsar, firstAsar);
       }),
     ).pipe(Effect.provideService(HostProcess.Platform, "linux")),
@@ -1372,7 +1394,16 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
   it.effect("rejects a Windows payload that regresses above the file-count budget", () =>
     Effect.scoped(
       Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
         const fixture = yield* makeWindowsPayloadFixture({ copyUnpackedNatives: true });
+        const cacheDir = path.join(fixture.packagedAppDir, "resources/server-compile-cache");
+        yield* fs.makeDirectory(cacheDir, { recursive: true });
+        yield* fs.writeFileString(path.join(cacheDir, "unexpected.js"), "extra payload");
+        yield* fs.writeFileString(
+          path.join(cacheDir, "manifest.json"),
+          '{"format":1,"runtime":"fixture","entries":[{"module":"server.asar/apps/server/dist/other.mjs","file":"unexpected.js"}]}',
+        );
         const error = yield* validateWindowsPackagedPayload({
           stageDistDir: fixture.stageDistDir,
           appExecutableName: fixture.appExecutableName,
@@ -1385,6 +1416,7 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         assert.equal(error.reason, "file-limit-exceeded");
         assert.isAbove(error.fileCount ?? 0, 2);
         assert.lengthOf(error.payloadFiles ?? [], error.fileCount ?? 0);
+        assert.include(error.payloadFiles ?? [], "resources/server-compile-cache/unexpected.js");
         assert.include(
           error.payloadFiles ?? [],
           "resources/resource-monitor/t3-resource-monitor.exe",

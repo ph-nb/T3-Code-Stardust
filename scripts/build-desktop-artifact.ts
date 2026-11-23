@@ -3263,6 +3263,16 @@ const listPayloadFiles = Effect.fn("desktopArtifact.listPayloadFiles")(function*
   return files.sort();
 });
 
+const decodePreparedCacheManifest = Schema.decodeUnknownEffect(
+  Schema.fromJsonString(
+    Schema.Struct({
+      format: Schema.Literals([1]),
+      runtime: Schema.String,
+      entries: Schema.Array(Schema.Struct({ module: Schema.String, file: Schema.String })),
+    }),
+  ),
+);
+
 export const verifyWindowsPrimaryFffNativeLoad = Effect.fn(
   "desktopArtifact.verifyWindowsPrimaryFffNativeLoad",
 )(function* (input: {
@@ -3572,13 +3582,35 @@ export const validateWindowsPackagedPayload = Effect.fn(
 
   const payloadFiles = yield* listPayloadFiles(packagedAppDir);
   const fileCount = payloadFiles.length;
-  if (fileCount > fileLimit) {
+  const cachePrefix = "resources/server-compile-cache/";
+  const cacheManifest = yield* fs
+    .readFileString(path.join(packagedAppDir, cachePrefix, "manifest.json"))
+    .pipe(
+      Effect.flatMap(decodePreparedCacheManifest),
+      Effect.orElseSucceed(() => null),
+    );
+  const cacheFiles = new Set<string>();
+  // afterPack prepares one bytecode file per server module; the budget guards ordinary unpacked files.
+  if (
+    cacheManifest?.entries.length &&
+    cacheManifest.entries.every(
+      (entry) =>
+        /^[a-f0-9]{8}$/.test(entry.file) &&
+        /^(app|server)\.asar\/apps\/server\/dist\/[^/\\]+\.mjs$/.test(entry.module),
+    )
+  ) {
+    cacheFiles.add(`${cachePrefix}manifest.json`);
+    for (const entry of cacheManifest.entries) cacheFiles.add(`${cachePrefix}${entry.file}`);
+  }
+  const budgetedPayloadFiles = payloadFiles.filter((file) => !cacheFiles.has(file));
+  const preparedCacheFileCount = fileCount - budgetedPayloadFiles.length;
+  if (budgetedPayloadFiles.length > fileLimit) {
     return yield* new WindowsPackagedPayloadValidationError({
       reason: "file-limit-exceeded",
       packagedAppDir,
-      fileCount,
+      fileCount: budgetedPayloadFiles.length,
       fileLimit,
-      payloadFiles,
+      payloadFiles: budgetedPayloadFiles,
     });
   }
 
@@ -3590,9 +3622,9 @@ export const validateWindowsPackagedPayload = Effect.fn(
   });
 
   yield* Effect.log(
-    `[desktop-artifact] Validated Windows payload (${String(fileCount)} files, ${String(unpackedFiles.length)} sidecar natives).`,
+    `[desktop-artifact] Validated Windows payload (${String(fileCount)} files, ${String(preparedCacheFileCount)} prepared cache files, ${String(unpackedFiles.length)} sidecar natives).`,
   );
-  return { packagedAppDir, fileCount, unpackedFiles } as const;
+  return { packagedAppDir, fileCount, preparedCacheFileCount, unpackedFiles } as const;
 });
 
 export class MacPackagedAppMissingError extends Schema.TaggedError<MacPackagedAppMissingError>()(
