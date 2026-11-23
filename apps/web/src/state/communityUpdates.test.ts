@@ -51,24 +51,23 @@ afterEach(() => {
 describe("community release boundaries", () => {
   it("offers verified assets for the client OS and architecture", () => {
     const releases = [
-      "Stardust-1.2.4-win-x64.exe",
-      "Stardust-1.2.4-win-arm64.exe",
-      "Stardust-1.2.4-linux-x64.AppImage",
-      "Stardust-1.2.4-linux-arm64.deb",
-    ];
-    for (const platform of ["win", "linux"] as const) {
-      for (const arch of ["x64", "arm64"] as const) {
-        const matching = releases.find((name) => name.includes(`-${platform}-${arch}.`))!;
-        const input = {
-          ...stardustRelease("1.2.4"),
-          assets: [{ ...stardustRelease().assets[0], name: matching }],
-        };
-        expect(parseCommunityRelease(input, { platform, arch }).tag).toBe("v1.2.4");
-        expect(() => parseCommunityRelease(stardustRelease(), { platform, arch })).toThrow();
-        expect(() =>
-          parseCommunityRelease(input, { platform, arch: arch === "x64" ? "arm64" : "x64" }),
-        ).toThrow();
-      }
+      { platform: "win", arch: "x64", name: "Stardust-1.2.4-win-x64.exe" },
+      { platform: "win", arch: "arm64", name: "Stardust-1.2.4-win-arm64.exe" },
+      { platform: "linux", arch: "x64", name: "Stardust-x86_64.AppImage" },
+      { platform: "linux", arch: "x64", name: "Stardust-1.2.4-linux-x86_64.AppImage" },
+      { platform: "linux", arch: "x64", name: "Stardust-1.2.4-linux-amd64.deb" },
+      { platform: "linux", arch: "arm64", name: "Stardust-1.2.4-linux-arm64.deb" },
+    ] as const;
+    for (const { platform, arch, name } of releases) {
+      const input = {
+        ...stardustRelease("1.2.4"),
+        assets: [{ ...stardustRelease().assets[0], name }],
+      };
+      expect(parseCommunityRelease(input, { platform, arch }).tag).toBe("v1.2.4");
+      expect(() => parseCommunityRelease(stardustRelease(), { platform, arch })).toThrow();
+      expect(() =>
+        parseCommunityRelease(input, { platform, arch: arch === "x64" ? "arm64" : "x64" }),
+      ).toThrow();
     }
     expect(communityReleaseTarget("win32", "arm64")).toEqual({ platform: "win", arch: "arm64" });
     expect(communityReleaseTarget("linux", "x64")).toEqual({ platform: "linux", arch: "x64" });

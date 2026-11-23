@@ -55,8 +55,18 @@ function expectedAssetNames(
   if (semver) {
     const stem = `Stardust-${semver[1]}-${target.platform}-${target.arch}`;
     if (target.platform === "win") return [`${stem}.exe`];
-    if (target.platform === "linux")
-      return [`${stem}.AppImage`, `${stem}.deb`, `Stardust-${target.arch}.AppImage`];
+    if (target.platform === "linux") {
+      const appImageArch = target.arch === "x64" ? "x86_64" : "arm64";
+      const debArch = target.arch === "x64" ? "amd64" : "arm64";
+      return [
+        `${stem}.AppImage`,
+        `${stem}.deb`,
+        `Stardust-${target.arch}.AppImage`,
+        `Stardust-${appImageArch}.AppImage`,
+        `Stardust-${semver[1]}-linux-${appImageArch}.AppImage`,
+        `Stardust-${semver[1]}-linux-${debArch}.deb`,
+      ];
+    }
     return [
       `${stem}.zip`,
       `${stem}.dmg`,
