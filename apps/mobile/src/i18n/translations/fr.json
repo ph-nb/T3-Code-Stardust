@@ -5459,5 +5459,15 @@
   "ad208e3e32c85029": "Tout masquer",
   "3328503592789bed": "Zen",
   "856812e7e1fc445e": "Appels d’outils dans la discussion",
-  "8d545d54c0a9e950": "Masque les commandes, modifications et recherches lancées par les agents. Masquer les réussis garde les échecs. Zen n’affiche que les réponses finales. Les approbations, questions et erreurs s’affichent toujours."
+  "8d545d54c0a9e950": "Masque les commandes, modifications et recherches lancées par les agents. Masquer les réussis garde les échecs. Zen n’affiche que les réponses finales. Les approbations, questions et erreurs s’affichent toujours.",
+  "9eb0c5e2d230d8ed": "Vue d’ensemble de la session",
+  "e92c8b1d1bf0824e": "Tokens et cache",
+  "5d686ed082370474": "Tours et étapes",
+  "a530034e13f75a31": "Vitesse de sortie",
+  "5755c03c64f9f184": "{rate} tokens/s",
+  "4aeb4ef589895e03": "Temps du modèle",
+  "9ff6e3e75435240e": "Temps des outils",
+  "17554cfe5cad2ded": "Tokens d’entrée",
+  "8435cf543bf90afc": "Tokens de sortie",
+  "e9335c042b3836f6": "Taux de succès du cache d’entrée"
 }

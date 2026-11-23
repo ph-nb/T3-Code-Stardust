@@ -66,7 +66,10 @@ export function ComposerInlineControl(props: {
         accessibilityState={
           props.static ? undefined : { disabled: props.disabled, selected: props.selected }
         }
-        className="h-[44px] flex-row items-center gap-2 rounded-xl px-2 active:bg-subtle"
+        className={cn(
+          "h-[44px] flex-row items-center gap-2 rounded-full px-3 active:bg-subtle",
+          props.emphasized && "border border-composer-border bg-grouped-card",
+        )}
         disabled={props.disabled || props.static}
         onPress={props.onPress}
         style={{ opacity: props.disabled ? 0.45 : 1 }}

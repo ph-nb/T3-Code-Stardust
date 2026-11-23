@@ -6,6 +6,7 @@ import {
   COMMUNITY_REPOSITORY,
   communityReleaseNumber,
   parseCommunityRelease,
+  communityReleaseTarget,
   type CommunityRelease,
   type CommunityUpdateMode,
 } from "./communityUpdates.logic";
@@ -113,7 +114,19 @@ export const useCommunityUpdates = create<CommunityUpdatesState>((set, get) => {
                 ? uiText("GitHub is rate-limiting update checks. Try again later.")
                 : uiText("Update check failed (HTTP {status})", { status: response.status }),
             );
-          const release = parseCommunityRelease(await response.json());
+          const platform =
+            typeof window !== "undefined"
+              ? (window.desktopBridge?.getClientPlatform() ?? navigator.platform)
+              : "darwin";
+          const arch =
+            typeof window !== "undefined"
+              ? (window.desktopBridge?.getClientArchitecture?.() ??
+                (/arm64|aarch64/i.test(navigator.userAgent) ? "arm64" : "x64"))
+              : "arm64";
+          const release = parseCommunityRelease(
+            await response.json(),
+            communityReleaseTarget(platform, arch),
+          );
           const baseline = communityReleaseNumber(COMMUNITY_BASE_TAG);
           if (baseline === null)
             throw new Error(uiText("Local community baseline unknown. Check the releases page."));

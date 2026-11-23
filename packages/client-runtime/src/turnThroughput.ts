@@ -1,3 +1,4 @@
+// @effect-diagnostics globalDate:off -- Parses provider timestamps in a synchronous UI selector.
 import type { ThreadStructure } from "@t3tools/client-runtime/state/shell";
 import { latestProviderTurnForAttempt } from "@t3tools/contracts";
 import * as DateTime from "effect/DateTime";

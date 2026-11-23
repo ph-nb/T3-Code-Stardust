@@ -4,8 +4,8 @@ import { useEnvironmentThread } from "../../state/threads";
 import type { ThreadStructure } from "@t3tools/client-runtime/state/shell";
 import { memo, useEffect, useState } from "react";
 import { useUiText } from "../../i18n/useUiText";
-import { formatStatDuration } from "./sessionStats";
-import { selectTurnThroughput, throughputReading } from "./turnThroughput";
+import { formatStatDuration } from "@t3tools/client-runtime/sessionStats";
+import { selectTurnThroughput, throughputReading } from "@t3tools/client-runtime/turnThroughput";
 
 /** Local one-second clock only; no polling requests or updates to the chat timeline. */
 export function useVisibleTurnClock(ticking: boolean) {

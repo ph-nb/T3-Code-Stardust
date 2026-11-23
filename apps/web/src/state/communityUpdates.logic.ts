@@ -3,7 +3,7 @@ import { uiText } from "../i18n";
 /** Community releases are independent of upstream Electron version numbers. */
 /** The community release this build ships as. Bump with every public release. */
 export const COMMUNITY_BASE_TAG = "v1.2.3";
-export const COMMUNITY_REPOSITORY = "zds-xiaoxin/xiaoxin-t3code";
+export const COMMUNITY_REPOSITORY = "ph-nb/T3-Code-Stardust";
 export const COMMUNITY_RELEASES_URL = `https://github.com/${COMMUNITY_REPOSITORY}/releases`;
 export const COMMUNITY_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
 export type CommunityUpdateMode = "standard" | "custom";
@@ -36,25 +36,51 @@ export function communityReleaseNumber(tag: string): number | null {
   }
   return null;
 }
-function expectedMacAssetNames(tag: string, number: number): ReadonlyArray<string> {
-  const semver = /^v([1-9]\d*\.\d+\.\d+)$/.exec(tag);
-  // Published assets keep the tag's "v" (T3-Stardust-v1.2.1-macOS-arm64.zip).
-  if (semver)
-    return [
-      `T3-Stardust-v${semver[1]}-macOS-arm64.zip`,
-      `T3-Stardust-${semver[1]}-macOS-arm64.zip`,
-    ];
-  return [`Xiaoxin-T3-Code-C${number}-macOS-arm64.zip`];
+export interface CommunityReleaseTarget {
+  readonly platform: "mac" | "win" | "linux";
+  readonly arch: "arm64" | "x64";
 }
-export function parseCommunityRelease(value: unknown): CommunityRelease {
+export function communityReleaseTarget(platform: string, arch = "x64"): CommunityReleaseTarget {
+  return {
+    platform: /^(win|windows)/i.test(platform) ? "win" : /linux/i.test(platform) ? "linux" : "mac",
+    arch: /arm64|aarch64/i.test(arch) ? "arm64" : "x64",
+  };
+}
+function expectedAssetNames(
+  tag: string,
+  number: number,
+  target: CommunityReleaseTarget,
+): ReadonlyArray<string> {
+  const semver = /^v([1-9]\d*\.\d+\.\d+)$/.exec(tag);
+  if (semver) {
+    const stem = `Stardust-${semver[1]}-${target.platform}-${target.arch}`;
+    if (target.platform === "win") return [`${stem}.exe`];
+    if (target.platform === "linux")
+      return [`${stem}.AppImage`, `${stem}.deb`, `Stardust-${target.arch}.AppImage`];
+    return [
+      `${stem}.zip`,
+      `${stem}.dmg`,
+      ...(target.arch === "arm64"
+        ? [`T3-Stardust-v${semver[1]}-macOS-arm64.zip`, `T3-Stardust-${semver[1]}-macOS-arm64.zip`]
+        : []),
+    ];
+  }
+  return target.platform === "mac" && target.arch === "arm64"
+    ? [`Xiaoxin-T3-Code-C${number}-macOS-arm64.zip`]
+    : [];
+}
+export function parseCommunityRelease(
+  value: unknown,
+  target: CommunityReleaseTarget = { platform: "mac", arch: "arm64" },
+): CommunityRelease {
   if (!value || typeof value !== "object") throw new Error(uiText("Invalid release information"));
   const release = value as Record<string, unknown>;
   const tag = typeof release.tag_name === "string" ? release.tag_name : "";
   const number = communityReleaseNumber(tag);
   if (number === null || release.draft !== false || release.prerelease !== false) {
-    throw new Error(uiText("The latest release is unavailable for Mac"));
+    throw new Error(uiText("The latest release is unavailable for this platform"));
   }
-  const allowedAssetNames = expectedMacAssetNames(tag, number);
+  const allowedAssetNames = expectedAssetNames(tag, number, target);
   if (
     !Array.isArray(release.assets) ||
     !release.assets.some((asset: unknown) => {
@@ -71,9 +97,7 @@ export function parseCommunityRelease(value: unknown): CommunityRelease {
       );
     })
   )
-    throw new Error(
-      uiText("No complete, verifiable Mac Apple Silicon build is available for this release"),
-    );
+    throw new Error(uiText("No complete, verifiable build is available for this platform"));
   // Construct trusted URLs; do not follow arbitrary URLs supplied by a response.
   return {
     tag,

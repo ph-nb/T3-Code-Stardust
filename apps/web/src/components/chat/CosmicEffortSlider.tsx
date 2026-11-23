@@ -13,7 +13,7 @@ import {
   sampleStarshipFlash,
   starshipStoryAtRatio,
   stepStarshipParticles,
-} from "./cosmicSliderScenes";
+} from "@t3tools/shared/starshipScene";
 
 export interface CosmicEffortOption {
   readonly id: string;

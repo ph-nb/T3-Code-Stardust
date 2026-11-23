@@ -23,7 +23,7 @@ import { Pressable, View } from "react-native";
 import { useNowMinuteMs } from "../../lib/clock";
 import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
 import { ScreenScrollView as ScrollView } from "../../components/ui/ScreenScrollView";
-import { Defs, Path, Pattern, Rect, Svg } from "react-native-svg";
+import { Circle, Defs, Path, Pattern, Rect, Svg } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SymbolView } from "../../components/ui/AppSymbol";
@@ -206,19 +206,47 @@ function PoolWindowCard({
   const summary = (
     <>
       <View className={wide ? "gap-1" : "flex-row items-start justify-between gap-3"}>
-        <View className="gap-1">
-          {label !== null ? (
-            <Text className="text-sm font-t3-medium text-foreground">{label ?? pool.label}</Text>
-          ) : null}
-          <View className="flex-row items-baseline gap-1.5">
-            <Text className="text-sm text-foreground-muted">
-              <T>
-                <Text className="text-3xl font-t3-bold tabular-nums text-foreground">
-                  <Var>{pool.remainingPercent}</Var>%
-                </Text>{" "}
-                left
-              </T>
-            </Text>
+        <View className="min-w-0 flex-1 flex-row items-center gap-3">
+          <Svg width={56} height={56} viewBox="0 0 56 56" accessible={false}>
+            <Circle
+              cx={28}
+              cy={28}
+              r={23}
+              stroke={color}
+              strokeOpacity={0.12}
+              strokeWidth={5}
+              fill="none"
+            />
+            <Circle
+              cx={28}
+              cy={28}
+              r={23}
+              stroke={color}
+              strokeWidth={5}
+              fill="none"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 23}`}
+              strokeDashoffset={
+                2 * Math.PI * 23 * (1 - Math.max(0, Math.min(100, pool.remainingPercent)) / 100)
+              }
+              rotation={-90}
+              origin="28,28"
+            />
+          </Svg>
+          <View className="min-w-0 flex-1 gap-1">
+            {label !== null ? (
+              <Text className="text-sm font-t3-medium text-foreground">{label ?? pool.label}</Text>
+            ) : null}
+            <View className="flex-row items-baseline gap-1.5">
+              <Text className="text-sm text-foreground-muted">
+                <T>
+                  <Text className="text-3xl font-t3-bold tabular-nums text-foreground">
+                    <Var>{pool.remainingPercent}</Var>%
+                  </Text>{" "}
+                  left
+                </T>
+              </Text>
+            </View>
           </View>
         </View>
         {pool.pace ? (

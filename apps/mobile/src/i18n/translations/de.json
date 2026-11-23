@@ -5465,5 +5465,15 @@
   "ad208e3e32c85029": "Alle ausblenden",
   "3328503592789bed": "Zen",
   "856812e7e1fc445e": "Tool-Aufrufe im Chat",
-  "8d545d54c0a9e950": "Die Befehle, Bearbeitungen und Suchen ausblenden, die Agenten ausführen. „Erfolgreiche ausblenden“ behält Fehler. „Zen“ zeigt nur endgültige Antworten. Genehmigungen, Fragen und Fehler werden immer angezeigt."
+  "8d545d54c0a9e950": "Die Befehle, Bearbeitungen und Suchen ausblenden, die Agenten ausführen. „Erfolgreiche ausblenden“ behält Fehler. „Zen“ zeigt nur endgültige Antworten. Genehmigungen, Fragen und Fehler werden immer angezeigt.",
+  "9eb0c5e2d230d8ed": "Sitzungsübersicht",
+  "e92c8b1d1bf0824e": "Tokens und Cache",
+  "5d686ed082370474": "Runden und Schritte",
+  "a530034e13f75a31": "Ausgabegeschwindigkeit",
+  "5755c03c64f9f184": "{rate} Token/s",
+  "4aeb4ef589895e03": "Modellzeit",
+  "9ff6e3e75435240e": "Werkzeugzeit",
+  "17554cfe5cad2ded": "Eingabe-Tokens",
+  "8435cf543bf90afc": "Ausgabe-Tokens",
+  "e9335c042b3836f6": "Cache-Trefferquote bei Eingaben"
 }

@@ -1,6 +1,8 @@
 /* All material overrides disappear when another palette is selected. */
 html:root[data-theme-id="apple"] {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable", "Segoe UI", "Noto Sans",
+    "PingFang SC", "Microsoft YaHei UI", sans-serif;
   --surface-grain: none;
   --radius: 0.75rem;
   --control-radius: 0.5rem;

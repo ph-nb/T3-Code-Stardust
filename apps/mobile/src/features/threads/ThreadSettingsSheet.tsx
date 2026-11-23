@@ -58,6 +58,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { SymbolView } from "../../components/ui/AppSymbol";
+import { StarshipEffortSlider } from "../../components/stardust/StarshipEffortSlider";
 import { AppText as Text } from "../../components/ui/AppText";
 import { AppBar } from "../../components/ui/AppBar";
 import { ProviderIcon } from "../../components/ProviderIcon";
@@ -998,6 +999,30 @@ function ThreadSettingsOptionsItem(props: {
       >
         {session.displayedDescriptors.map((descriptor) => {
           if (descriptor.type === "select") {
+            if (
+              descriptor.id === session.promptTraits.primarySelectDescriptor?.id &&
+              !session.promptTraits.ultrathinkPromptControlled
+            ) {
+              const choices = selectableChoices(descriptor);
+              if (choices.length > 1)
+                return (
+                  <StarshipEffortSlider
+                    key={descriptor.id}
+                    label={descriptor.label}
+                    options={choices}
+                    value={String(
+                      getProviderOptionCurrentValue(
+                        descriptor,
+                        session.displayedModelSelection,
+                        session.reportedModelSelection,
+                      ) ??
+                        choices[0]?.id ??
+                        "",
+                    )}
+                    onChange={(value) => session.applyOptionChange(descriptor.id, value)}
+                  />
+                );
+            }
             return (
               <Animated.View
                 key={descriptor.id}

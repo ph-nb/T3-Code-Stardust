@@ -5467,5 +5467,15 @@
   "ad208e3e32c85029": "Hide all",
   "3328503592789bed": "Zen",
   "856812e7e1fc445e": "Tool calls in chat",
-  "8d545d54c0a9e950": "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show."
+  "8d545d54c0a9e950": "Hide the commands, edits, and searches agents run. Hide successful keeps failures. Zen shows only final answers. Approvals, questions, and errors always show.",
+  "9eb0c5e2d230d8ed": "Session overview",
+  "e92c8b1d1bf0824e": "Tokens & cache",
+  "5d686ed082370474": "Rounds & steps",
+  "a530034e13f75a31": "Output speed",
+  "5755c03c64f9f184": "{rate} tok/s",
+  "4aeb4ef589895e03": "Model time",
+  "9ff6e3e75435240e": "Tool time",
+  "17554cfe5cad2ded": "Input tokens",
+  "8435cf543bf90afc": "Output tokens",
+  "e9335c042b3836f6": "Input cache hit rate"
 }

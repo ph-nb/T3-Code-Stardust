@@ -5465,5 +5465,15 @@
   "ad208e3e32c85029": "Dölj alla",
   "3328503592789bed": "Zen",
   "856812e7e1fc445e": "Verktygsanrop i chatten",
-  "8d545d54c0a9e950": "Dölj kommandon, redigeringar och sökningar som agenter kör. Dölj lyckade behåller misslyckanden. Zen visar bara slutliga svar. Godkännanden, frågor och fel visas alltid."
+  "8d545d54c0a9e950": "Dölj kommandon, redigeringar och sökningar som agenter kör. Dölj lyckade behåller misslyckanden. Zen visar bara slutliga svar. Godkännanden, frågor och fel visas alltid.",
+  "9eb0c5e2d230d8ed": "Sessionsöversikt",
+  "e92c8b1d1bf0824e": "Token och cache",
+  "5d686ed082370474": "Omgångar och steg",
+  "a530034e13f75a31": "Utmatningshastighet",
+  "5755c03c64f9f184": "{rate} token/s",
+  "4aeb4ef589895e03": "Modelltid",
+  "9ff6e3e75435240e": "Verktygstid",
+  "17554cfe5cad2ded": "Indatatoken",
+  "8435cf543bf90afc": "Utdatatoken",
+  "e9335c042b3836f6": "Träffgrad för indatacache"
 }

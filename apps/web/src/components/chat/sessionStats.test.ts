@@ -2,7 +2,11 @@ import { describe, expect, it } from "vite-plus/test";
 import * as DateTime from "effect/DateTime";
 import type { OrchestrationV2ThreadProjection } from "@t3tools/contracts";
 import { uiText } from "../../i18n";
-import { formatStatDuration, formatTokenCount, selectSessionStats } from "./sessionStats";
+import {
+  formatStatDuration,
+  formatTokenCount,
+  selectSessionStats,
+} from "@t3tools/client-runtime/sessionStats";
 
 const at = (seconds: number) => DateTime.makeUnsafe(seconds * 1000);
 const item = (type: string, turn: string, start: number, end: number | null) => ({

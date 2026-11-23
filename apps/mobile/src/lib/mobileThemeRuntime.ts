@@ -9,7 +9,7 @@ import {
 
 export type MobileUniwindThemeName =
   | MobileThemeAppearance
-  | `${BuiltInThemeId}-${MobileThemeAppearance}`;
+  | `${BuiltInThemeId | "apple"}-${MobileThemeAppearance}`;
 
 export interface MobileThemeRuntimeState {
   readonly baseFontSize: number;
@@ -32,7 +32,7 @@ export type MobileThemeRuntimeOperation =
 const UNIWIND_THEME_NAMES: ReadonlyArray<"light" | "dark" | MobileUniwindThemeName> = [
   "light",
   "dark",
-  ...BUILT_IN_THEME_IDS.flatMap((themeId) => [
+  ...[...BUILT_IN_THEME_IDS, "apple" as const].flatMap((themeId) => [
     `${themeId}-light` as const,
     `${themeId}-dark` as const,
   ]),

@@ -5,7 +5,11 @@ import { memo, useLayoutEffect, useRef, useState } from "react";
 import { useUiText } from "../../i18n/useUiText";
 import { Popover, PopoverPopup, PopoverTitle, PopoverTrigger } from "../ui/popover";
 import "./composerV9.css";
-import { formatStatDuration, formatTokenCount, selectSessionStats } from "./sessionStats";
+import {
+  formatStatDuration,
+  formatTokenCount,
+  selectSessionStats,
+} from "@t3tools/client-runtime/sessionStats";
 import { useVisibleTurnClock } from "./TurnThroughputStatus";
 
 const runLabels: Partial<Record<OrchestrationV2RunStatus, string>> = {
@@ -54,9 +58,7 @@ export const SessionStatsBar = memo(function SessionStatsBar({
       positionStatsDockPill(dockPillRef.current, null);
       return;
     }
-    const target = clusterRef.current?.querySelector<HTMLElement>(
-      `[data-v9-stats-trig="${open}"]`,
-    );
+    const target = clusterRef.current?.querySelector<HTMLElement>(`[data-v9-stats-trig="${open}"]`);
     positionStatsDockPill(dockPillRef.current, target ?? null);
   }, [open]);
 
@@ -119,10 +121,7 @@ export const SessionStatsBar = memo(function SessionStatsBar({
   ]
     .filter(Boolean)
     .join(" · ");
-  const narrowRightSummary = [
-    totalText,
-    cacheHitPercent === null ? null : `${cacheHitPercent}%`,
-  ]
+  const narrowRightSummary = [totalText, cacheHitPercent === null ? null : `${cacheHitPercent}%`]
     .filter(Boolean)
     .join(" · ");
 
@@ -137,7 +136,10 @@ export const SessionStatsBar = memo(function SessionStatsBar({
       >
         <div ref={dockPillRef} aria-hidden="true" data-v9-stats-dock-pill />
 
-        <Popover open={open === "session"} onOpenChange={(next) => setOpen(next ? "session" : null)}>
+        <Popover
+          open={open === "session"}
+          onOpenChange={(next) => setOpen(next ? "session" : null)}
+        >
           <PopoverTrigger
             render={
               <button

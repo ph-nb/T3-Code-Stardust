@@ -85,7 +85,7 @@ export class DesktopEnvironment extends Context.Service<
   }
 >()("@t3tools/desktop/app/DesktopEnvironment") {}
 
-const APP_BASE_NAME = "T3 Code";
+const APP_BASE_NAME = "Stardust";
 
 function resolveDesktopAppStageLabel(input: {
   readonly isDevelopment: boolean;
@@ -98,7 +98,7 @@ function resolveDesktopAppStageLabel(input: {
   return isNightlyDesktopVersion(input.appVersion) ? "Nightly" : "Beta";
 }
 
-export const STARDUST_DISPLAY_NAME = "T3 Stardust";
+export const STARDUST_DISPLAY_NAME = "Stardust";
 
 export function resolveDesktopAppBranding(input: {
   readonly isDevelopment: boolean;

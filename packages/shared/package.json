@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./starshipScene": {
+      "types": "./src/starshipScene.ts",
+      "import": "./src/starshipScene.ts"
+    },
     "./png": {
       "types": "./src/png.ts",
       "import": "./src/png.ts"

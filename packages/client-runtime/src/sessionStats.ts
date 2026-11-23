@@ -1,8 +1,7 @@
 import type { ThreadStructure } from "@t3tools/client-runtime/state/shell";
 import { orchestrationV2RunWorkStartedAt } from "@t3tools/contracts";
 import { TURN_TOOL_ITEM_TYPES, computeTurnModelDuration } from "@t3tools/shared/usageMerge";
-import type { uiText } from "../../i18n";
-import { selectWorkingRun, terminalRunStatuses } from "./turnThroughput";
+import { selectWorkingRun, terminalRunStatuses } from "./turnThroughput.ts";
 import * as DateTime from "effect/DateTime";
 
 const TOOL_ITEMS = TURN_TOOL_ITEM_TYPES;
@@ -137,7 +136,11 @@ function computeSessionStats(projection: ThreadStructure) {
 }
 export type SessionStats = ReturnType<typeof selectSessionStats>;
 
-export function formatStatDuration(value: number, text: typeof uiText, compact = false) {
+export function formatStatDuration(
+  value: number,
+  text: (source: string, values?: Readonly<Record<string, number>>) => string,
+  compact = false,
+) {
   const seconds = Math.floor(Math.max(0, value) / 1000);
   if (seconds < 60) return text("{seconds}s", { seconds });
   const minutes = Math.floor(seconds / 60);

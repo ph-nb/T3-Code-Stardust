@@ -27,6 +27,8 @@
 
 ---
 
+本仓库已加入 **Windows、Linux 和 Android 的 UI 源码适配与构建入口**。桌面共用新版 Stardust 界面，Android 使用原生布局适配星舰推理滑块、配色和额度圆环。安装包与验证状态、构建命令见 [跨平台移植与构建说明](docs/user/stardust-cross-platform.zh-CN.md)。下方现有下载链接仍是原作者发布的 macOS 安装包。
+
 <a id="highlights"></a>
 
 ## 核心亮点与动效实录
@@ -82,13 +84,13 @@
   <img src="assets/community/v1.2.0/demo-slider-gallery.gif" alt="星尘积木工坊：V18 流体星舰 / V16 星尘观测站 / V19 像素星舰 / V19 赛博机甲 HUD" width="94%" />
 </p>
 
-| 积木方案 | 视觉风格 | 仓库目录 | 在线体验 |
-| --- | --- | --- | --- |
-| **V18 流体写实星舰** | 正式版默认搭载 · 连续飞行 + 离屏贴图 + 2s 自动休眠 | [`stardust-kit/v18-starship-fluid`](stardust-kit/v18-starship-fluid/) | [demo.html](stardust-kit/v18-starship-fluid/demo.html) |
-| **V16 星尘观测站** | 治愈像素叙事 · 小机器人夜间逐件点亮观测站与流星 | [`stardust-kit/v16-stardust-observatory`](stardust-kit/v16-stardust-observatory/) | [demo.html](stardust-kit/v16-stardust-observatory/demo.html) |
-| **V19-A 16-Bit 像素星舰** | 复古街机高精像素火箭与圆润火焰烟球 | [`stardust-kit/v19-pixel-starship`](stardust-kit/v19-pixel-starship/) | [demo.html](stardust-kit/v19-pixel-starship/demo.html) |
-| **V19-B 赛博机甲 HUD** | 高达 / EVA 遥测网格、流体光带尾迹与曲速护盾 | [`stardust-kit/v19-cyber-hud`](stardust-kit/v19-cyber-hud/) | [demo.html](stardust-kit/v19-cyber-hud/demo.html) |
-| **V17 高对比实验 4 套** | 星舰 / 聚变核心超频 / 日食引力弹弓 / 星钢淬火 | [`stardust-kit/v17-thrill-experiments`](stardust-kit/v17-thrill-experiments/) | [demo.html](stardust-kit/v17-thrill-experiments/demo.html) |
+| 积木方案                  | 视觉风格                                           | 仓库目录                                                                          | 在线体验                                                     |
+| ------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **V18 流体写实星舰**      | 正式版默认搭载 · 连续飞行 + 离屏贴图 + 2s 自动休眠 | [`stardust-kit/v18-starship-fluid`](stardust-kit/v18-starship-fluid/)             | [demo.html](stardust-kit/v18-starship-fluid/demo.html)       |
+| **V16 星尘观测站**        | 治愈像素叙事 · 小机器人夜间逐件点亮观测站与流星    | [`stardust-kit/v16-stardust-observatory`](stardust-kit/v16-stardust-observatory/) | [demo.html](stardust-kit/v16-stardust-observatory/demo.html) |
+| **V19-A 16-Bit 像素星舰** | 复古街机高精像素火箭与圆润火焰烟球                 | [`stardust-kit/v19-pixel-starship`](stardust-kit/v19-pixel-starship/)             | [demo.html](stardust-kit/v19-pixel-starship/demo.html)       |
+| **V19-B 赛博机甲 HUD**    | 高达 / EVA 遥测网格、流体光带尾迹与曲速护盾        | [`stardust-kit/v19-cyber-hud`](stardust-kit/v19-cyber-hud/)                       | [demo.html](stardust-kit/v19-cyber-hud/demo.html)            |
+| **V17 高对比实验 4 套**   | 星舰 / 聚变核心超频 / 日食引力弹弓 / 星钢淬火      | [`stardust-kit/v17-thrill-experiments`](stardust-kit/v17-thrill-experiments/)     | [demo.html](stardust-kit/v17-thrill-experiments/demo.html)   |
 
 ---
 
@@ -97,6 +99,7 @@
 ## 更新提醒与隐私说明
 
 ### 应用内新版本提醒
+
 - 启动时及之后每 6 小时，应用会请求 GitHub 公开接口，查看本仓库最新的正式发行版（只认带完整 macOS Apple Silicon 安装包和 SHA256 摘要的版本）。
 - 发现新版本时弹出提醒，点击直达发行页下载。**应用不会自动下载、替换或重启**，升级请按下方「下载与安装」步骤手动完成。
 - 在 **设置 → 关于** 中可以：
@@ -105,6 +108,7 @@
 - 检查更新不发送聊天、账号或项目数据。
 
 ### 使用统计与隐私
+
 - **星尘活跃人数（v1.2.1 起，默认开启）**：为了知道有多少人在用，应用每天最多发送一次：随机安装 ID、星尘版本号、系统和芯片类型，发到 `xiaoxin666.cn/api/stardust`。不发送聊天、账号、项目或文件路径；网站接口不读取也不转发你的 IP，服务器只保存安装 ID 的再哈希值，按天去重，90 天后删除。
 - 第一次启动新版本会弹出说明，可以直接点「关闭统计」；之后在 **设置 → 关于 →「计入星尘活跃用户」** 随时开关。关闭后不再发送。
 - 网站 [xiaoxin666.cn/stardust](https://www.xiaoxin666.cn/stardust) 只公开「近 7 天活跃设备数」一个数字。
@@ -122,6 +126,7 @@
 - **安装包下载**：[T3-Stardust-v1.2.3-macOS-arm64.zip](https://github.com/zds-xiaoxin/stardust/releases/download/v1.2.3/T3-Stardust-v1.2.3-macOS-arm64.zip) · [Releases 发行页 & SHA256SUMS.txt](https://github.com/zds-xiaoxin/stardust/releases/tag/v1.2.3) · [详细发行说明](docs/community/v1.2.3/RELEASE.zh.md)
 
 ### 快速校验与安装
+
 1. 下载 ZIP 与 `SHA256SUMS.txt` 到同一目录，终端校验完整性：
    ```bash
    shasum -a 256 -c SHA256SUMS.txt

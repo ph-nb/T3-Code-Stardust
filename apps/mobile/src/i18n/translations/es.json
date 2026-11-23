@@ -5459,5 +5459,15 @@
   "ad208e3e32c85029": "Ocultar todo",
   "3328503592789bed": "Zen",
   "856812e7e1fc445e": "Llamadas a herramientas en el chat",
-  "8d545d54c0a9e950": "Oculta los comandos, ediciones y búsquedas que ejecutan los agentes. Ocultar las correctas mantiene los fallos. Zen solo muestra las respuestas finales. Las aprobaciones, preguntas y errores siempre se muestran."
+  "8d545d54c0a9e950": "Oculta los comandos, ediciones y búsquedas que ejecutan los agentes. Ocultar las correctas mantiene los fallos. Zen solo muestra las respuestas finales. Las aprobaciones, preguntas y errores siempre se muestran.",
+  "9eb0c5e2d230d8ed": "Resumen de sesión",
+  "e92c8b1d1bf0824e": "Tokens y caché",
+  "5d686ed082370474": "Rondas y pasos",
+  "a530034e13f75a31": "Velocidad de salida",
+  "5755c03c64f9f184": "{rate} tokens/s",
+  "4aeb4ef589895e03": "Tiempo del modelo",
+  "9ff6e3e75435240e": "Tiempo de herramientas",
+  "17554cfe5cad2ded": "Tokens de entrada",
+  "8435cf543bf90afc": "Tokens de salida",
+  "e9335c042b3836f6": "Tasa de aciertos de caché de entrada"
 }

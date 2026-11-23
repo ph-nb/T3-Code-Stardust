@@ -3,6 +3,14 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./sessionStats": {
+      "types": "./src/sessionStats.ts",
+      "import": "./src/sessionStats.ts"
+    },
+    "./turnThroughput": {
+      "types": "./src/turnThroughput.ts",
+      "import": "./src/turnThroughput.ts"
+    },
     "./pull-request-diff-fold": {
       "types": "./src/pullRequestDiffFold.ts",
       "default": "./src/pullRequestDiffFold.ts"

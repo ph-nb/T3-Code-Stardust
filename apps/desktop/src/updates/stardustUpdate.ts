@@ -6,14 +6,10 @@
  *
  * @module stardustUpdate
  */
-/* oxlint-disable t3code/no-low-value-comments -- The owner asked for this TODO; no tracking issue exists yet. */
-// TODO(windows): electron-updater with a `github` provider for zds-xiaoxin/xiaoxin-t3code can
-// serve Windows NSIS builds once they publish latest.yml; Windows and Linux are unchanged until then.
-/* oxlint-enable t3code/no-low-value-comments */
 import * as NodeCrypto from "node:crypto";
 import * as NodeFS from "node:fs";
 
-export const STARDUST_REPOSITORY = "zds-xiaoxin/xiaoxin-t3code";
+export const STARDUST_REPOSITORY = "ph-nb/T3-Code-Stardust";
 export const STARDUST_LATEST_RELEASE_API = `https://api.github.com/repos/${STARDUST_REPOSITORY}/releases/latest`;
 export const STARDUST_BUILD_INFO_FILE = "stardust-build.json";
 
@@ -157,7 +153,11 @@ export interface StardustRelease {
 }
 
 export function stardustMacAssetNames(version: string): ReadonlyArray<string> {
-  return [`T3-Stardust-v${version}-macOS-arm64.zip`, `T3-Stardust-${version}-macOS-arm64.zip`];
+  return [
+    `Stardust-${version}-mac-arm64.zip`,
+    `T3-Stardust-v${version}-macOS-arm64.zip`,
+    `T3-Stardust-${version}-macOS-arm64.zip`,
+  ];
 }
 
 /** Parses GitHub's `releases/latest` response. Only URLs this function builds are ever fetched. */

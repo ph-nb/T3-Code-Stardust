@@ -82,6 +82,7 @@ import {
 } from "../../components/ComposerToolbar";
 import { formatTokens } from "@t3tools/shared/usageFormat";
 import { ComposerModelControl } from "../../components/ComposerModelControl";
+import { ThreadSessionStatsDock } from "../../components/stardust/ThreadSessionStatsDock";
 import {
   composerStripAttachments,
   type DraftComposerFileAttachment,
@@ -1137,6 +1138,12 @@ export const ThreadComposer = function ThreadComposer(props: ThreadComposerProps
             </ComposerDictationToolbar>
           </Animated.View>
         </ComposerSurface>
+
+        {!props.isDraft && !props.hidden ? (
+          <ThreadSessionStatsDock
+            threadRef={{ environmentId: props.environmentId, threadId: props.selectedThread.id }}
+          />
+        ) : null}
 
         {props.connectionState === "connected" && operateDenied ? (
           <Text className="pt-2 text-xs text-foreground-muted">
