@@ -257,6 +257,16 @@
   ],
   "packageOverrides": [
     {
+      "name": "@redis/client",
+      "version": "5.11.0",
+      "license": "MIT",
+      "sourceUrl": "https://github.com/redis/node-redis/tree/redis%405.11.0",
+      "generatedNotice": {
+        "licenseId": "MIT",
+        "copyrights": ["Copyright (c) 2022-2023, Redis, inc."]
+      }
+    },
+    {
       "name": "entities",
       "version": "8.1.0",
       "license": "BSD-2-Clause",

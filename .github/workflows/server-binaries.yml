@@ -8,6 +8,12 @@ on:
       - .github/workflows/server-binaries.yml
       - scripts/smoke-cli-archive.ts
       - infra/server-storage/**
+      - apps/server/**
+      - apps/web/**
+      - packages/**
+      - scripts/build-cli-archive.ts
+      - third-party-licenses.config.json
+      - pnpm-lock.yaml
 
 permissions:
   contents: read
