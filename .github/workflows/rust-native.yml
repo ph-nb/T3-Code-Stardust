@@ -87,3 +87,18 @@ jobs:
         run: vp run --filter @t3tools/web build
       - name: Compile Tauri desktop
         run: cargo check --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked
+      - name: Test native desktop startup selection
+        if: runner.os == 'Windows'
+        run: cargo test --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked
+      - name: Build Windows Rust installer
+        if: runner.os == 'Windows'
+        working-directory: native/stardust/crates/desktop
+        run: npx --yes --package @tauri-apps/cli@2.12.6 tauri build --ci --bundles nsis -- --locked
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: runner.os == 'Windows'
+        with:
+          name: stardust-rust-desktop-preview-windows-x64
+          path: |
+            native/stardust/target/release/bundle/nsis/*-setup.exe
+            native/stardust/target/release/stardust-desktop.exe
+          if-no-files-found: error

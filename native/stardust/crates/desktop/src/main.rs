@@ -1,7 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use stardust_runtime::{api::NativeServer, config::Config};
-use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
+use std::io::Write;
+use tauri::{Manager, WebviewUrl, WebviewWindowBuilder, webview::PageLoadEvent};
+
+mod launch;
+
+use launch::{LaunchMode, launch_mode};
 
 struct EmbeddedRuntime {
     shutdown: tokio_util::sync::CancellationToken,
@@ -9,27 +14,31 @@ struct EmbeddedRuntime {
 
 fn main() {
     let app = tauri::Builder::default().setup(|app| {
-        let address = match std::env::var("STARDUST_DESKTOP_URL") {
-            Ok(address) => address,
-            Err(_) => {
+        let address = std::env::var("STARDUST_DESKTOP_URL").ok();
+        let mode = launch_mode(address.as_deref(), std::env::var_os("STARDUST_STATE_DIR").is_some())?;
+        let (url, title, mode_name) = match mode {
+            LaunchMode::Bundled => (WebviewUrl::App("index.html".into()), "星尘 · Rust 预览版 · 连接模式", "bundled"),
+            LaunchMode::Remote(url) => (WebviewUrl::External(url), "星尘 · Rust 预览版", "remote"),
+            LaunchMode::Embedded => {
                 let config = Config::load_environment("127.0.0.1:0".parse()?)?;
                 if config.frontend_dir.is_none() {return Err("STARDUST_FRONTEND_DIR must select a built frontend for embedded hosting".into());}
                 let server = tauri::async_runtime::block_on(NativeServer::bind(config))
                     .map_err(|_| "native runtime initialization failed")?;
                 let address = format!("http://{}", server.address);
+                diagnostic(app.handle(), &format!("embedded-listener={address}"));
                 app.manage(EmbeddedRuntime {shutdown: server.shutdown.clone()});
                 tauri::async_runtime::spawn(async move {let _ = server.run().await;});
-                address
+                (WebviewUrl::External(address.parse()?), "星尘 · Rust 预览版 · 本地服务测试", "embedded")
             }
         };
-        let url = url::Url::parse(&address)?;
-        let trusted_loopback = url.host_str().is_some_and(|host| matches!(host, "127.0.0.1" | "localhost" | "[::1]"));
-        if !(url.scheme() == "https" || url.scheme() == "http" && trusted_loopback)
-            || !url.username().is_empty() || url.password().is_some() {
-            return Err("desktop URL requires HTTPS or loopback HTTP without embedded credentials".into());
-        }
-        WebviewWindowBuilder::new(app, "main", WebviewUrl::External(url))
-            .title("星尘 · Stardust Rust Preview")
+        diagnostic(app.handle(), &format!("shell-started mode={mode_name}"));
+        WebviewWindowBuilder::new(app, "main", url)
+            .title(title)
+            .on_page_load(move |window, payload| {
+                if payload.event() == PageLoadEvent::Finished {
+                    diagnostic(window.app_handle(), &format!("webview-loaded mode={mode_name}"));
+                }
+            })
             .inner_size(1280.0, 840.0).min_inner_size(800.0, 600.0).build()?;
         Ok(())
     }).build(tauri::generate_context!()).expect("could not create the native desktop shell");
@@ -39,5 +48,29 @@ fn main() {
         {
             runtime.shutdown.cancel();
         }
+        if matches!(event, tauri::RunEvent::Exit) {
+            diagnostic(app, "shell-exited");
+        }
     });
+}
+
+fn diagnostic(app: &tauri::AppHandle, event: &str) {
+    let Ok(directory) = app.path().app_log_dir() else {
+        return;
+    };
+    if std::fs::create_dir_all(&directory).is_err() {
+        return;
+    }
+    if let Ok(mut log) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(directory.join("startup.log"))
+    {
+        let _ = writeln!(
+            log,
+            "pid={} version={} {event}",
+            std::process::id(),
+            env!("CARGO_PKG_VERSION")
+        );
+    }
 }

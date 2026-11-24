@@ -44,8 +44,16 @@ export function isHostedStaticApp(url?: URL): boolean {
     return false;
   }
 
+  const currentUrl = url ?? new URL(window.location.href);
+  if (
+    currentUrl.origin === "http://tauri.localhost" ||
+    (currentUrl.protocol === "tauri:" && currentUrl.host === "localhost")
+  ) {
+    return true;
+  }
+
   const hostedOrigin = originFromUrl(configuredHostedAppUrl());
-  return hostedOrigin !== null && (url ?? new URL(window.location.href)).origin === hostedOrigin;
+  return hostedOrigin !== null && currentUrl.origin === hostedOrigin;
 }
 
 export function readHostedPairingRequest(url: URL = new URL(window.location.href)) {
