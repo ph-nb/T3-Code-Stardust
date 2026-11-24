@@ -22,6 +22,45 @@ Redis key 包含环境 ID 的哈希及启动代号，清理只作用于当前命
 
 ## 准备服务
 
+### 使用二进制部署包
+
+`Stardust Linux server binaries` Actions 构建 x64 和 ARM64 原生部署包，包含 `t3` 可执行文件、完整 Web 界面、resource monitor、本地运行扩展和部署示例。下载对应架构的 artifact，解开 artifact 后校验 `.tar.gz.sha256`，再解开 `.tar.gz`。保留目录内全部文件，T3 自身运行无需安装 Node.js、npm 或 pnpm。Provider CLI、Git 和它们各自的运行依赖需要另外安装。
+
+当前构建和启动验证使用 Ubuntu 24.04（glibc），不适用于 Alpine/musl。PostgreSQL、Redis 按下一节单独运行，也可以连接已有数据库服务。
+
+新环境的 systemd 部署示例：
+
+```sh
+sha256sum -c stardust-server-*.tar.gz.sha256
+tar -xzf stardust-server-*-linux-x64.tar.gz # ARM64 使用对应包
+sudo useradd --system --create-home --home-dir /var/lib/stardust --shell /bin/bash stardust
+sudo install -d /opt/stardust-server
+sudo cp -a stardust-server-linux-x64/. /opt/stardust-server/
+sudo install -m 0600 /opt/stardust-server/deploy/service.env.example /etc/stardust-server.env
+# 编辑 /etc/stardust-server.env，填入实际数据库、Redis 地址和密码。
+sudo install -m 0644 /opt/stardust-server/deploy/stardust-server.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now stardust-server
+```
+
+示例只监听 `127.0.0.1:3773`，可在前面配置 HTTPS 反向代理。Provider 应使用同一个 `stardust` 用户完成登录，并允许该用户访问工作区。已有环境升级时，先停止服务、备份 T3 home 和文件资产，保留原环境 ID；迁移命令中的 `t3` 可直接使用 `/opt/stardust-server/t3`。systemd 直接读取 `/etc/stardust-server.env`，手动 CLI 操作也须加载相同环境变量。
+
+本地构建使用仓库指定 Node 版本，在目标架构的 Linux 上执行：
+
+```sh
+vp install --frozen-lockfile
+vp run --filter t3 build
+cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml
+mkdir -p apps/server/dist/resource-monitor/linux-x64
+cp native/resource-monitor/target/release/t3-resource-monitor apps/server/dist/resource-monitor/linux-x64/
+node apps/server/scripts/cli.ts build-exe --verbose
+node scripts/build-cli-archive.ts --platform linux --arch x64 --version 0.1.11 --output-dir release-server
+```
+
+ARM64 在 ARM64 主机上构建，将上述目录名和 `--arch` 改为 `arm64`；构建还需要 C/C++ 工具链、Rust、`libsecret-1-dev`、`pkg-config` 和 `patchelf`。
+
+### PostgreSQL 和 Redis
+
 `infra/server-storage/compose.yaml` 提供 PostgreSQL 17 和 Redis 8.2。PostgreSQL 保存到独立 volume，Redis 使用 256 MiB 的 `allkeys-lfu` 内存淘汰策略并关闭持久化。两者仅映射到本机回环地址。T3 和 Provider CLI 仍运行在 Linux 主机上。
 
 1. 在 `infra/server-storage` 复制 `.env.example` 为 `.env`，填入三个独立密码。使用 `openssl rand -hex 32` 生成的十六进制密码可以直接用于示例连接 URL。
