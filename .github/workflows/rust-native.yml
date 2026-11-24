@@ -1,0 +1,89 @@
+name: Rust native runtime preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/rust-native-runtime]
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17.7-bookworm
+        env:
+          POSTGRES_USER: stardust_test
+          POSTGRES_PASSWORD: fixture-only
+          POSTGRES_DB: stardust_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U stardust_test -d stardust_test" --health-interval 5s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis:8.2-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      STARDUST_TEST_POSTGRES_URL: postgresql://stardust_test:fixture-only@127.0.0.1:5432/stardust_test
+      STARDUST_TEST_REDIS_URL: redis://127.0.0.1:6379/0
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Native format
+        run: cargo fmt --manifest-path native/stardust/Cargo.toml --all --check
+      - name: Native unit tests
+        run: cargo test --manifest-path native/stardust/Cargo.toml --locked
+      - name: PostgreSQL and Redis integration
+        run: cargo test --manifest-path native/stardust/Cargo.toml -p stardust-runtime --features integration --locked
+      - name: Native lint
+        run: cargo clippy --manifest-path native/stardust/Cargo.toml --all-targets --features integration --locked -- -D warnings
+      - name: Build Rust server
+        run: cargo build --manifest-path native/stardust/Cargo.toml -p stardust-server --release --locked
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: stardust-rust-server-preview-linux-x64
+          path: native/stardust/target/release/stardust-server
+          if-no-files-found: error
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Linux webview dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb
+        with:
+          node-version-file: package.json
+          run-install: false
+      - name: Install frontend build dependencies
+        run: vp install --frozen-lockfile --filter=@t3tools/web... --filter=@t3tools/scripts... --filter=t3...
+      - name: Check exported compatibility contracts
+        run: |
+          node apps/server/scripts/export-rust-schema.ts --check
+          node scripts/export-rust-contracts.ts --check
+      - name: Build retained React frontend
+        run: vp run --filter @t3tools/web build
+      - name: Compile Tauri desktop
+        run: cargo check --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked
