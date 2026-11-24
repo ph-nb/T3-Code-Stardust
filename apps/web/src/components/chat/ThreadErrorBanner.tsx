@@ -1,5 +1,4 @@
-
-import { uiText } from "~/i18n";
+import { useUiText } from "~/i18n/useUiText";
 import { conversationLabel } from "~/i18n/conversationLabel";
 import { Tooltip, TooltipTrigger, TooltipPopup } from "../ui/tooltip";
 
@@ -96,6 +95,7 @@ export const ThreadErrorBanner = memo(function ThreadErrorBanner({
   onDismiss?: () => void;
 }) {
   const gt = useGT();
+  const uiText = useUiText();
   if (!error) return null;
   const message = getThreadErrorBannerMessage(error);
   const localized = conversationLabel(message, uiText);

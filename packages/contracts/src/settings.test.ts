@@ -43,6 +43,13 @@ const encodeServerSettings = Schema.encodeSync(ServerSettings);
 const encodeServerSettingsPatch = Schema.encodeSync(ServerSettingsPatch);
 const decodeClaudeSettings = Schema.decodeUnknownSync(ClaudeSettings);
 
+it("defaults new clients to Chinese and preserves a saved language choice", () => {
+  expect(decodeClientSettings({}).language).toBe("zh");
+  for (const language of ["en", "system", "fr", "zh"]) {
+    expect(decodeClientSettings({ language }).language).toBe(language);
+  }
+});
+
 it("drops theme defaults from a client's settings patch", () => {
   expect(
     decodeClientServerSettingsPatch({
