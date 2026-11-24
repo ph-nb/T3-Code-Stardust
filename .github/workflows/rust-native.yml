@@ -88,7 +88,8 @@ jobs:
       - name: Install Chromium for desktop policy regression
         run: node apps/web/node_modules/playwright/cli.js install --with-deps --only-shell chromium
       - name: Verify desktop WebAssembly and worker policy
-        run: vp test run apps/web/src/components/files/imageDecode.browser.test.ts
+        working-directory: apps/web
+        run: vp test run src/components/files/imageDecode.browser.test.ts --project browser
       - name: Compile Tauri desktop
         run: cargo check --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked
       - name: Test native desktop startup selection
