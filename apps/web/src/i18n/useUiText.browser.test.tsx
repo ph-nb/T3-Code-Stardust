@@ -1,9 +1,11 @@
 import { GTProvider } from "gt-react";
+import { DEFAULT_CLIENT_SETTINGS } from "@t3tools/contracts/settings";
 import { memo, useState } from "react";
 import { expect, it } from "vite-plus/test";
 import { render } from "../../test/render";
 import { useUiText } from "./useUiText";
 import zh from "./translations/zh.json";
+import { resolveStardustLocale } from "./customLocale";
 
 const Copy = memo(function Copy() {
   const text = useUiText();
@@ -99,9 +101,10 @@ function ConversationCopy() {
     </>
   );
 }
-it("renders Chinese conversation, task, sidebar, composer and plugin system copy while retaining command originals", async () => {
+it("renders Chinese conversation and composer copy by default on an English system while retaining command originals", async () => {
+  const locale = resolveStardustLocale(DEFAULT_CLIENT_SETTINGS.language, "en-US", ["en", "zh"]);
   await using screen = await render(
-    <GTProvider locale="zh" translations={{ zh, en: {} } as never}>
+    <GTProvider locale={locale} translations={{ zh, en: {} } as never}>
       <ConversationCopy />
     </GTProvider>,
     { router: false },
