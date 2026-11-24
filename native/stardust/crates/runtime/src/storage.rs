@@ -98,6 +98,10 @@ impl Database {
 
     async fn initialize(&self, identity: &str) -> Result<(), StorageError> {
         let mut tx = self.pool.begin().await?;
+        // Extensions are shared by schemas; IF NOT EXISTS alone races on an empty database.
+        sqlx::query("SELECT pg_advisory_xact_lock(hashtext('stardust-pg-extensions'), 0)")
+            .execute(&mut *tx)
+            .await?;
         sqlx::query("SELECT pg_advisory_xact_lock(hashtext($1), 0)")
             .bind(&self.schema)
             .execute(&mut *tx)
