@@ -1996,51 +1996,12 @@ describe("EnvironmentSupervisor", () => {
         thumbprint: Effect.succeed("test-thumbprint"),
         createProof: () => Effect.succeed("test-proof"),
       });
-      const unused = () => Effect.die("Unexpected relay operation.");
-      const relay = ManagedRelay.ManagedRelayClient.of({
-        relayUrl: "https://relay.example.test",
-        listEnvironments: unused,
-        listDevices: unused,
-        createEnvironmentLinkChallenge: unused,
-        linkEnvironment: unused,
-        unlinkEnvironment: unused,
-        getT3ChatLink: unused,
-        createT3ChatLinkRequest: unused,
-        unlinkT3Chat: unused,
-        getEnvironmentStatus: unused,
-        connectEnvironment: Effect.fn("TestConnectionHttp.connectEnvironment")(function* () {
-          yield* Ref.update(bootstrapCalls, (count) => count + 1);
-          if (yield* Ref.get(bootstrapFails)) {
-            return yield* new ManagedRelay.ManagedRelayRequestTimeoutError({
-              activity: "Relay environment connection",
-              timeoutMs: 6_000,
-              traceId: null,
-            });
-          }
-          return {
-            environmentId: TARGET.environmentId,
-            endpoint,
-            credential: "relay-bootstrap",
-            expiresAt: "2026-09-04T01:00:00.000Z",
-          };
-        }),
-        registerDevice: unused,
-        unregisterDevice: unused,
-        registerLiveActivity: unused,
-        getAgentActivitySnapshot: unused,
-        resetTokenCache: Effect.void,
-      });
       const layerHttp = RpcHttp.layerRemoteHttpClient(fetchFn);
       const remoteAuthorization = yield* RemoteEnvironmentAuthorization.make.pipe(
         Effect.provide(
           Layer.mergeAll(
             layerHttp,
             Layer.succeed(ManagedRelay.ManagedRelayDpopSigner, signer),
-            Layer.succeed(ManagedRelay.ManagedRelayClient, relay),
-            Layer.succeed(ClientCapabilities.CloudSession, {
-              identity: Effect.succeedSome({ accountId: "test-account" }),
-              clerkToken: Effect.succeed("clerk-token"),
-            }),
             Layer.succeed(ClientCapabilities.RelayDeviceIdentity, {
               deviceId: Effect.succeedNone,
             }),

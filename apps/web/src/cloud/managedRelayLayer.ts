@@ -1,15 +1,7 @@
-import { DpopProof, ManagedRelay } from "@t3tools/client-runtime/relay";
-import { RelayWebClientId } from "@t3tools/contracts/relay";
-import * as Layer from "effect/Layer";
-
+import { DpopProof } from "@t3tools/client-runtime/relay";
 import { loadOrCreateProofKey } from "./dpop";
 
-const layerRelayDpopSigner = DpopProof.layerSigner({
+export const layer = DpopProof.layerSigner({
   keyStore: "indexed-db",
   loadOrCreateKey: loadOrCreateProofKey(),
 });
-
-export const layer = (relayUrl: string) =>
-  ManagedRelay.layer({ relayUrl, clientId: RelayWebClientId }).pipe(
-    Layer.provideMerge(layerRelayDpopSigner),
-  );

@@ -86,6 +86,10 @@ jobs:
           node apps/server/scripts/export-rust-local-contracts.ts --check
       - name: Build retained React frontend
         run: vp run --filter @t3tools/web build
+      - name: Verify direct connections omit account fingerprints
+        run: vp test run packages/client-runtime/src/authorization/remote.test.ts packages/client-runtime/src/authorization/layer.test.ts
+      - name: Verify retired cloud accounts cannot authorize access
+        run: vp test run apps/server/src/cloud/http.test.ts apps/server/src/auth/EnvironmentAuth.test.ts -t "refuses cloud account|rejects saved cloud"
       - name: Install Chromium for desktop policy regression
         run: node apps/web/node_modules/playwright/cli.js install --with-deps --only-shell chromium
       - name: Verify desktop WebAssembly and worker policy

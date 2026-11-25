@@ -64,34 +64,6 @@ vi.mock(import("@t3tools/client-runtime/state/session"), async (original) => {
     })) as never,
   };
 });
-vi.mock(import("../../cloud/publicConfig"), async (original) => ({
-  ...(await original()),
-  hasCloudPublicConfig: () => state.cloud,
-}));
-vi.mock(import("@clerk/react"), async (original) => ({
-  ...(await original()),
-  useAuth: (() => state.auth) as never,
-}));
-vi.mock(import("../clerk/clerkLoadFailure"), async (original) => ({
-  ...(await original()),
-  useClerkLoadFailed: () => false,
-}));
-vi.mock(import("../clerk/useT3ConnectAuthPrompt"), async (original) => ({
-  ...(await original()),
-  useT3ConnectAuthPrompt: (() => ({ openAuthPrompt: () => {} })) as never,
-}));
-vi.mock(import("../../cloud/cloudLinkState"), async (original) => {
-  const { useAtomValue } = await import("@effect/atom-react");
-  return {
-    ...(await original()),
-    useCloudLinkState: (() => ({
-      data: useAtomValue(state.linkState as Atom.Atom<EnvironmentCloudLinkStateResult | null>),
-      error: state.linkError,
-      isPending: false,
-      refresh: state.refreshLinkState,
-    })) as never,
-  };
-});
 vi.mock(import("../../onboarding/firstRun"), async (original) => ({
   ...(await original()),
   completeOnboarding: state.completeOnboarding,

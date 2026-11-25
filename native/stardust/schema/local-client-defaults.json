@@ -1748,7 +1748,6 @@
       "guestSharingEnabled": false,
       "linkedEnvironmentsEnabled": false,
       "promptSuggestionsEnabled": false,
-      "telemetryEnabled": false,
       "sidebarAutoSettleKeepPullRequests": false,
       "sidebarAutoSettleOnMerge": true,
       "backgroundActivity": {

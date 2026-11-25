@@ -49,7 +49,6 @@ import {
   type RenderFailureProps,
 } from "./components/RenderErrorBoundary";
 import { ArchivedThreadsRouteScreen } from "./features/archive/ArchivedThreadsRouteScreen";
-import { ConnectOnboardingRouteScreen } from "./features/cloud/ConnectOnboardingRouteScreen";
 import { AttachmentFileScreen } from "./features/files/AttachmentFileScreen";
 import { ThreadFilesTreeScreen, ThreadFileScreen } from "./features/files/ThreadFilesRouteScreen";
 import { AdaptiveWorkspaceLayout } from "./features/layout/AdaptiveWorkspaceLayout";
@@ -102,7 +101,6 @@ import { SettingsAppearanceRouteScreen } from "./features/settings/SettingsAppea
 import { SettingsClientStorageRouteScreen } from "./features/settings/SettingsClientStorageRouteScreen";
 import { SettingsDiagnosticsRouteScreen } from "./features/diagnostics/SettingsDiagnosticsRouteScreen";
 import { SettingsProviderAccountsRouteScreen } from "./features/settings/SettingsProviderAccountsRouteScreen";
-import { SettingsAuthRouteScreen } from "./features/settings/SettingsAuthRouteScreen";
 import { SettingsEnvironmentDetailRouteScreen } from "./features/settings/SettingsEnvironmentDetailRouteScreen";
 import {
   SettingsIssueTrackerRouteScreen,
@@ -211,7 +209,6 @@ const ROUTE_TITLES: Readonly<Record<string, string>> = {
   AddProject: msg("Add project"),
   ThreadFiles: msg("Files"),
   SettingsLegal: msg("Legal"),
-  ConnectOnboarding: msg("Set up {product}", { product: "T3 Connect" }),
   Connections: msg("Environments"),
   ConnectionsNew: msg("Add Environment"),
 };
@@ -425,16 +422,6 @@ const SETTINGS_SCREENS = {
     screen: UsageRouteScreen,
     linking: "settings/usage",
     options: settingsPage(),
-  }),
-  SettingsAuth: createNativeStackScreen({
-    screen: SettingsAuthRouteScreen,
-    linking: "settings/auth",
-    options: { headerShown: false, presentation: "modal" },
-  }),
-  SettingsWaitlist: createNativeStackScreen({
-    screen: SettingsAuthRouteScreen,
-    linking: "settings/waitlist",
-    options: { headerShown: false, presentation: "modal" },
   }),
 };
 
@@ -835,15 +822,6 @@ const RootStackConfig = createWorkspaceStackNavigator({
       screen: SettingsLegalRouteScreen,
       linking: "settings/legal",
       options: modalRoute({ header: "solid" }),
-    }),
-    ConnectOnboarding: createNativeStackScreen({
-      screen: ConnectOnboardingRouteScreen,
-      linking: "connect-onboarding",
-      options: sheetRoute({
-        header: "solid",
-        detent: 0.6,
-        androidMaxDetent: 0.95,
-      }),
     }),
     Connections: createNativeStackScreen({
       screen: ConnectionsRouteScreen,
