@@ -83,6 +83,7 @@ jobs:
         run: |
           node apps/server/scripts/export-rust-schema.ts --check
           node scripts/export-rust-contracts.ts --check
+          node apps/server/scripts/export-rust-local-contracts.ts --check
       - name: Build retained React frontend
         run: vp run --filter @t3tools/web build
       - name: Install Chromium for desktop policy regression
@@ -92,6 +93,14 @@ jobs:
         run: vp test run src/components/files/imageDecode.browser.test.ts --project browser
       - name: Compile Tauri desktop
         run: cargo check --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked
+      - name: Local desktop persistence and admission tests
+        run: cargo test --manifest-path native/stardust/Cargo.toml -p stardust-runtime --features desktop --locked
+      - name: Local desktop lint
+        run: cargo clippy --manifest-path native/stardust/Cargo.toml -p stardust-runtime --features desktop --all-targets --locked -- -D warnings
+      - name: Build local protocol verification host
+        run: cargo build --manifest-path native/stardust/Cargo.toml -p stardust-runtime --features desktop --bin stardust-local --locked
+      - name: Verify retained client contracts and replay turns against Rust
+        run: node apps/server/scripts/prove-rust-local.ts native/stardust/target/debug/stardust-local${{ runner.os == 'Windows' && '.exe' || '' }}
       - name: Test native desktop startup selection
         if: runner.os == 'Windows'
         run: cargo test --manifest-path native/stardust/Cargo.toml -p stardust-desktop --locked

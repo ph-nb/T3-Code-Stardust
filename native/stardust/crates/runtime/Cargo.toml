@@ -7,6 +7,12 @@ license.workspace = true
 
 [features]
 integration = []
+desktop = ["sqlx/sqlite", "dep:clap", "tower-http/cors"]
+
+[[bin]]
+name = "stardust-local"
+path = "src/bin/local.rs"
+required-features = ["desktop"]
 
 [dependencies]
 axum.workspace = true
@@ -23,6 +29,15 @@ tower-http.workspace = true
 tracing.workspace = true
 url.workspace = true
 uuid.workspace = true
+time = { version = "0.3", features = ["formatting"] }
+clap = { workspace = true, optional = true }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+  "Win32_Foundation",
+  "Win32_Security",
+  "Win32_System_JobObjects",
+] }
 
 [dev-dependencies]
 tempfile = "3.23"

@@ -1,9 +1,13 @@
+import { readNativeDesktopBootstrap } from "../../nativeDesktop";
+
 let desktopBearerTokenPromise: Promise<string> | null = null;
 
 export function readDesktopPrimaryBearerToken(): Promise<string | null> {
   if (typeof window === "undefined") {
     return Promise.resolve(null);
   }
+  const native = readNativeDesktopBootstrap();
+  if (native) return Promise.resolve(native.bearerToken);
   const bridge = window.desktopBridge;
   if (!bridge) {
     return Promise.resolve(null);

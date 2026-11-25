@@ -54,6 +54,8 @@
       "entry": [
         "storage.vite.config.ts",
         "scripts/export-rust-schema.ts",
+        "scripts/export-rust-local-contracts.ts",
+        "scripts/prove-rust-local.ts",
         "src/bin.ts!",
         "src/claude-history-worker.ts!",
         "scripts/cli.ts",

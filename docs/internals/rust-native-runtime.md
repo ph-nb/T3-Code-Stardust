@@ -10,7 +10,9 @@ The migration must preserve environment identity, the current client protocol, r
 
 Use Tokio for asynchronous execution, Axum for HTTP and WebSocket transport, SQLx for PostgreSQL, redis-rs for cache access and Tauri 2 for platform webviews. Keep orchestration decisions independent of I/O, and execute provider, Git and filesystem effects only after intent commits. A modular process is sufficient for a single environment; these crate boundaries do not require microservices.
 
-The Node server remains the operational implementation until compatibility is demonstrated. The Rust preview only admits loopback connections and schemas prefixed `stardust_rust_`; it reports `clientProtocolCompatible: false`. Unknown RPCs return an explicit failure. A successful health check or native window build does not establish that existing clients or providers can use the new runtime.
+The Node server remains the complete operational implementation until parity is demonstrated. The PostgreSQL Rust preview only admits loopback connections and schemas prefixed `stardust_rust_`; it reports `clientProtocolCompatible: false`. The desktop's local mode now implements the retained protocol for admission, projects, threads and Codex execution, with its own SQLite projections and command receipts. It starts with a separate data directory, not an in-place import of shipping state. Unsupported RPCs fail explicitly. A successful health check or native window build does not establish full feature parity.
+
+The local desktop keeps renderer assets on the native app origin. Its in-memory credential is injected only into the top-level bundled document and is never served by the HTTP listener. Frontend code accepts that bootstrap only on the native origin and only for a loopback API target. Cookie admission remains separate, single-use bootstrap credentials expire, and WebSocket tickets are short-lived and consumed once. This avoids attaching native authority to navigated pages or workspace previews while preserving one authenticated primary environment across the existing client runtime.
 
 ## Protocol and data compatibility
 

@@ -2,7 +2,7 @@ use url::Url;
 
 #[derive(Debug, PartialEq)]
 pub enum LaunchMode {
-    Bundled,
+    Local,
     Remote(Url),
     Embedded,
 }
@@ -24,7 +24,7 @@ pub fn launch_mode(address: Option<&str>, embedded: bool) -> Result<LaunchMode, 
     Ok(if embedded {
         LaunchMode::Embedded
     } else {
-        LaunchMode::Bundled
+        LaunchMode::Local
     })
 }
 
@@ -33,8 +33,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn a_new_install_opens_the_bundled_connection_client_without_backend_configuration() {
-        assert_eq!(launch_mode(None, false).unwrap(), LaunchMode::Bundled);
+    fn a_new_install_starts_the_local_runtime_without_backend_configuration() {
+        assert_eq!(launch_mode(None, false).unwrap(), LaunchMode::Local);
         assert_eq!(launch_mode(None, true).unwrap(), LaunchMode::Embedded);
         assert!(matches!(
             launch_mode(Some("https://stardust.example.com"), true).unwrap(),

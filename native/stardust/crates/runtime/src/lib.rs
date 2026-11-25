@@ -1,5 +1,7 @@
 pub mod api;
 pub mod config;
+#[cfg(feature = "desktop")]
+pub mod local;
 pub mod protocol;
 pub mod storage;
 

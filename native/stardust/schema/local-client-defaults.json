@@ -1,0 +1,2284 @@
+{
+  "config": {
+    "environment": {
+      "environmentId": "native-local",
+      "label": "Windows",
+      "platform": {
+        "os": "windows",
+        "arch": "x64",
+        "machine": "desktop"
+      },
+      "serverVersion": "0.1.0-preview.4",
+      "orchestrationProtocolVersion": 2,
+      "capabilities": {
+        "repositoryIdentity": false,
+        "threadStop": true
+      }
+    },
+    "auth": {
+      "policy": "desktop-managed-local",
+      "bootstrapMethods": ["desktop-bootstrap"],
+      "sessionMethods": ["browser-session-cookie"],
+      "sessionCookieName": "stardust_local"
+    },
+    "cwd": ".",
+    "keybindingsConfigPath": ".",
+    "keybindings": [
+      {
+        "command": "sidebar.toggle",
+        "shortcut": {
+          "key": "b",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "workspace.focusNext",
+        "shortcut": {
+          "key": "f6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": false
+        }
+      },
+      {
+        "command": "workspace.focusPrevious",
+        "shortcut": {
+          "key": "f6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": false
+        }
+      },
+      {
+        "command": "workspace.focusNext",
+        "shortcut": {
+          "key": "f6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "workspace.focusPrevious",
+        "shortcut": {
+          "key": "f6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "navigation.back",
+        "shortcut": {
+          "key": "[",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "navigation.forward",
+        "shortcut": {
+          "key": "]",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "terminal.toggle",
+        "shortcut": {
+          "key": "j",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "inbox.next",
+        "shortcut": {
+          "key": "i",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "rightPanel.toggle",
+        "shortcut": {
+          "key": "b",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        }
+      },
+      {
+        "command": "threadPanel.toggle",
+        "shortcut": {
+          "key": "b",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "threadPanel.toggle",
+        "shortcut": {
+          "key": "i",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "rightPanel.new",
+        "shortcut": {
+          "key": "t",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "rightPanelOpen"
+          },
+          "right": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "terminalFocus"
+            }
+          }
+        }
+      },
+      {
+        "command": "terminal.split",
+        "shortcut": {
+          "key": "d",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "terminalFocus"
+        }
+      },
+      {
+        "command": "terminal.splitVertical",
+        "shortcut": {
+          "key": "d",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "terminalFocus"
+        }
+      },
+      {
+        "command": "composer.dictation",
+        "shortcut": {
+          "key": "d",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "terminal.new",
+        "shortcut": {
+          "key": "n",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "terminalFocus"
+        }
+      },
+      {
+        "command": "terminal.close",
+        "shortcut": {
+          "key": "w",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "terminalFocus"
+        }
+      },
+      {
+        "command": "rightPanel.close",
+        "shortcut": {
+          "key": "w",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "view.reopenClosed",
+        "shortcut": {
+          "key": "t",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "diff.toggle",
+        "shortcut": {
+          "key": "d",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "preview.toggle",
+        "shortcut": {
+          "key": "j",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "preview.refresh",
+        "shortcut": {
+          "key": "r",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.focusUrl",
+        "shortcut": {
+          "key": "l",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.zoomIn",
+        "shortcut": {
+          "key": "=",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.zoomIn",
+        "shortcut": {
+          "key": "+",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.zoomOut",
+        "shortcut": {
+          "key": "-",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.resetZoom",
+        "shortcut": {
+          "key": "0",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "preview.find",
+        "shortcut": {
+          "key": "f",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "previewFocus"
+        }
+      },
+      {
+        "command": "commandPalette.toggle",
+        "shortcut": {
+          "key": "k",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "filePicker.toggle",
+        "shortcut": {
+          "key": "p",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "projectSearch.toggle",
+        "shortcut": {
+          "key": "f",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "usage.open",
+        "shortcut": {
+          "key": "u",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "theme.select",
+        "shortcut": {
+          "key": "a",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "appearance.cycle",
+        "shortcut": {
+          "key": "a",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "themeEditor.toggle",
+        "shortcut": {
+          "key": "t",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": true,
+          "modKey": true
+        }
+      },
+      {
+        "command": "composer.stash",
+        "shortcut": {
+          "key": "s",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "thread.steerQueuedMessage",
+        "shortcut": {
+          "key": "enter",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "thread.editQueuedMessage",
+        "shortcut": {
+          "key": "arrowup",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": false
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "composerFocus"
+        }
+      },
+      {
+        "command": "composer.sendAlternate",
+        "shortcut": {
+          "key": "enter",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "composerFocus"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "turnRunning"
+          }
+        }
+      },
+      {
+        "command": "composer.sendBackground",
+        "shortcut": {
+          "key": "enter",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "composerFocus"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "draftThreadRoute"
+          }
+        }
+      },
+      {
+        "command": "composer.sendBackground",
+        "shortcut": {
+          "key": "enter",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "composerFocus"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "draftThreadRoute"
+          }
+        }
+      },
+      {
+        "command": "composer.sendAndNewThread",
+        "shortcut": {
+          "key": "enter",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "composerFocus"
+          },
+          "right": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "draftThreadRoute"
+            }
+          }
+        }
+      },
+      {
+        "command": "chat.new",
+        "shortcut": {
+          "key": "n",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "chat.new",
+        "shortcut": {
+          "key": "o",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "chat.newLocal",
+        "shortcut": {
+          "key": "n",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "chat.newWithoutProject",
+        "shortcut": {
+          "key": "n",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": true,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "chat.find",
+        "shortcut": {
+          "key": "f",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "terminalFocus"
+            }
+          },
+          "right": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "previewFocus"
+            }
+          }
+        }
+      },
+      {
+        "command": "modelPicker.toggle",
+        "shortcut": {
+          "key": "m",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.host",
+        "shortcut": {
+          "key": "h",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.effort",
+        "shortcut": {
+          "key": "e",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.mode",
+        "shortcut": {
+          "key": "a",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.workspace",
+        "shortcut": {
+          "key": "x",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.branch",
+        "shortcut": {
+          "key": "g",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "composer.previousWorktree",
+        "shortcut": {
+          "key": "l",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "pullRequest.copyNumber",
+        "shortcut": {
+          "key": "k",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.previousProvider",
+        "shortcut": {
+          "key": "arrowup",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "modelPickerOpen"
+        }
+      },
+      {
+        "command": "modelPicker.nextProvider",
+        "shortcut": {
+          "key": "arrowdown",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "modelPickerOpen"
+        }
+      },
+      {
+        "command": "editor.openFavorite",
+        "shortcut": {
+          "key": "o",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "thread.previous",
+        "shortcut": {
+          "key": "[",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "thread.next",
+        "shortcut": {
+          "key": "]",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        }
+      },
+      {
+        "command": "thread.copyReference",
+        "shortcut": {
+          "key": "c",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "thread.settle",
+        "shortcut": {
+          "key": "s",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "thread.pin",
+        "shortcut": {
+          "key": "p",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "not",
+          "node": {
+            "type": "identifier",
+            "name": "terminalFocus"
+          }
+        }
+      },
+      {
+        "command": "thread.undo",
+        "shortcut": {
+          "key": "z",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "terminalFocus"
+            }
+          },
+          "right": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "editableFocus"
+            }
+          }
+        }
+      },
+      {
+        "command": "thread.jump.1",
+        "shortcut": {
+          "key": "1",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.2",
+        "shortcut": {
+          "key": "2",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.3",
+        "shortcut": {
+          "key": "3",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.4",
+        "shortcut": {
+          "key": "4",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.5",
+        "shortcut": {
+          "key": "5",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.6",
+        "shortcut": {
+          "key": "6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.7",
+        "shortcut": {
+          "key": "7",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.8",
+        "shortcut": {
+          "key": "8",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "thread.jump.9",
+        "shortcut": {
+          "key": "9",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "not",
+            "node": {
+              "type": "identifier",
+              "name": "modelPickerOpen"
+            }
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.1",
+        "shortcut": {
+          "key": "1",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.2",
+        "shortcut": {
+          "key": "2",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.3",
+        "shortcut": {
+          "key": "3",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.4",
+        "shortcut": {
+          "key": "4",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.5",
+        "shortcut": {
+          "key": "5",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.6",
+        "shortcut": {
+          "key": "6",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.7",
+        "shortcut": {
+          "key": "7",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.8",
+        "shortcut": {
+          "key": "8",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "modelPicker.jump.9",
+        "shortcut": {
+          "key": "9",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "and",
+          "left": {
+            "type": "identifier",
+            "name": "modelPickerOpen"
+          },
+          "right": {
+            "type": "identifier",
+            "name": "isDesktop"
+          }
+        }
+      },
+      {
+        "command": "usage.cost",
+        "shortcut": {
+          "key": "c",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": false
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.tokens",
+        "shortcut": {
+          "key": "t",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": false
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.limits",
+        "shortcut": {
+          "key": "l",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": false
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.disk",
+        "shortcut": {
+          "key": "d",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": false,
+          "altKey": false,
+          "modKey": false
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.period.day",
+        "shortcut": {
+          "key": "1",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.period.week",
+        "shortcut": {
+          "key": "2",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.period.month",
+        "shortcut": {
+          "key": "3",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      },
+      {
+        "command": "usage.period.quarter",
+        "shortcut": {
+          "key": "4",
+          "metaKey": false,
+          "ctrlKey": false,
+          "shiftKey": true,
+          "altKey": false,
+          "modKey": true
+        },
+        "whenAst": {
+          "type": "identifier",
+          "name": "usagePageOpen"
+        }
+      }
+    ],
+    "issues": [],
+    "providers": [],
+    "availableEditors": [],
+    "observability": {
+      "logsDirectoryPath": ".",
+      "localTracingEnabled": false,
+      "otlpTracesEnabled": false,
+      "otlpMetricsEnabled": false,
+      "otlpLogsEnabled": false
+    },
+    "settings": {
+      "favorites": null,
+      "providerModelPreferences": null,
+      "worktreeCleanup": null,
+      "storageCleanup": {
+        "worktreeKeepWhen": "uncommitted-changes",
+        "worktreeAfterDays": null,
+        "worktreeSettledAfterDays": null,
+        "worktreeOnMerge": false,
+        "worktreeOnDelete": false,
+        "worktreeUnchanged": false,
+        "browserArtifactsAfterDays": null,
+        "logsAfterDays": null
+      },
+      "worktreesDirectory": "",
+      "fastWorktreeCheckout": false,
+      "previousWorktreesDirectories": [],
+      "responseStreamingMode": "paragraph",
+      "enableProviderUpdateChecks": true,
+      "continueThreadsAfterServerUpdate": true,
+      "keepAwakeWhileAgentsWork": true,
+      "requireConnectDeviceApproval": false,
+      "enableAgentBrowserAccess": true,
+      "enablePreviewTunnel": true,
+      "cloudSpeechCredentials": {
+        "openai": "",
+        "xai": "",
+        "openrouter": ""
+      },
+      "speechModelId": "handy-computer/parakeet-unified-en-0.6b-gguf",
+      "speechAcceleration": "auto",
+      "speechModelUnloadTimeout": "min_15",
+      "speechProjectCustomWords": [],
+      "speechPostProcessingModelSelection": null,
+      "projectAgentBrowserAccessOverrides": {},
+      "defaultAutoPull": false,
+      "defaultProjectScripts": [],
+      "projectScriptOverrides": {},
+      "projectAutoPullOverrides": {},
+      "defaultModelSelection": null,
+      "fallbackModelSelection": null,
+      "defaultRuntimeMode": "full-access",
+      "projectSettingsOverrides": {},
+      "projectSettingsFolded": false,
+      "enableAgentDeviceAccess": false,
+      "enableDeviceSupport": false,
+      "deviceOnboardingCompleted": false,
+      "deviceHosts": [],
+      "easDeviceHosts": [],
+      "simlockDeviceHosts": [],
+      "simlockDeviceHostsEnabled": false,
+      "sidebarAutoSettleAfterDays": 7,
+      "compactIdleThreads": false,
+      "snoozeLimitedThreads": false,
+      "autoResumeLimitedThreads": false,
+      "providerFallbackEnabled": false,
+      "providerFallbackChains": {},
+      "snoozePresets": [
+        {
+          "kind": "after",
+          "minutes": 60
+        },
+        {
+          "kind": "after",
+          "minutes": 180
+        },
+        {
+          "kind": "at",
+          "day": "today",
+          "time": "18:00"
+        },
+        {
+          "kind": "at",
+          "day": "tomorrow",
+          "time": "09:00"
+        },
+        {
+          "kind": "at",
+          "day": "monday",
+          "time": "09:00"
+        }
+      ],
+      "hiddenThreadTags": [],
+      "hideTaggedThreads": false,
+      "guestSharingEnabled": false,
+      "linkedEnvironmentsEnabled": false,
+      "promptSuggestionsEnabled": false,
+      "telemetryEnabled": false,
+      "sidebarAutoSettleKeepPullRequests": false,
+      "sidebarAutoSettleOnMerge": true,
+      "backgroundActivity": {
+        "schemaVersion": 1,
+        "profile": "balanced",
+        "overrides": {}
+      },
+      "automaticGitFetchInterval": 30000,
+      "providerHealthRefreshInterval": 300000,
+      "backgroundActivityProfile": "balanced",
+      "defaultTheme": "",
+      "defaultThemeSetAt": "",
+      "defaultAppearance": "",
+      "defaultAppearanceSetAt": "",
+      "environmentIcon": null,
+      "newWorktreesStartFromOrigin": true,
+      "worktreeSubmodules": null,
+      "addProjectBaseDirectory": "",
+      "ghqCloneLayout": false,
+      "textGenerationModelSelection": {
+        "instanceId": "codex",
+        "model": "gpt-6-luna",
+        "options": [
+          {
+            "id": "reasoningEffort",
+            "value": "low"
+          }
+        ]
+      },
+      "threadTitleInstructions": "",
+      "branchNamingMode": "static",
+      "branchNamePrefix": "t3",
+      "branchNameInstructions": "",
+      "removeAgentCreditsOnMerge": false,
+      "sourceControlWritingStyle": {
+        "mode": "repo_conventions",
+        "customInstructions": "",
+        "followChangeRequestTemplates": true
+      },
+      "sourceControlWriterModelSelection": null,
+      "reviewGuidesEnabled": false,
+      "reviewGuideModelSelection": null,
+      "reviewGuideInstructions": "",
+      "pullRequestMergeMethod": null,
+      "providerInstances": {},
+      "providerOrder": [],
+      "observability": {
+        "otlpTracesUrl": "",
+        "otlpMetricsUrl": "",
+        "otlpLogsUrl": ""
+      },
+      "sourceControlHosts": {},
+      "offeredSourceControlProviders": {},
+      "usageLimitSources": {},
+      "textGenerators": {},
+      "secretProviders": {},
+      "cursorKeychainUsageEnabled": false,
+      "usageHistoryRetentionDays": 92,
+      "usagePriceOverrides": {},
+      "usageModelAliases": {}
+    },
+    "shellResumeCompletionMarker": true,
+    "threadResumeCompletionMarker": true
+  },
+  "scopes": [
+    "orchestration:read",
+    "orchestration:operate",
+    "terminal:operate",
+    "relay:read",
+    "access:read",
+    "access:write",
+    "relay:write"
+  ],
+  "permissions": [
+    "orchestration:read",
+    "orchestration:operate",
+    "settings:write",
+    "providers:manage",
+    "environment:maintain",
+    "preview:operate",
+    "diagnostics:read",
+    "terminal:read",
+    "terminal:operate",
+    "source-control:write",
+    "filesystem:read",
+    "filesystem:write",
+    "relay:read",
+    "access:read",
+    "access:write",
+    "relay:write"
+  ],
+  "threadShell": {
+    "createdBy": "user",
+    "creationSource": "web",
+    "id": "thread",
+    "projectId": "project",
+    "title": "Thread",
+    "providerInstanceId": "codex",
+    "modelSelection": {
+      "instanceId": "codex",
+      "model": "default"
+    },
+    "runtimeMode": "approval-required",
+    "interactionMode": "default",
+    "branch": null,
+    "worktreePath": null,
+    "lineage": {
+      "parentThreadId": null,
+      "relationshipToParent": null,
+      "rootThreadId": "thread"
+    },
+    "forkedFrom": null,
+    "activeProviderThreadId": null,
+    "latestRunId": null,
+    "activeRunId": null,
+    "status": "idle",
+    "pendingRuntimeRequest": null,
+    "latestVisibleMessage": null,
+    "latestUserMessageAt": null,
+    "hasActionableProposedPlan": false,
+    "pendingBackgroundTasks": [],
+    "providerInstanceHistory": [],
+    "itemCount": 0,
+    "visibleItemCount": 0,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "archivedAt": null,
+    "settledOverride": null,
+    "settledAt": null,
+    "lastVisitedAt": "2026-01-01T00:00:00.000Z",
+    "deletedAt": null
+  },
+  "projection": {
+    "thread": {
+      "createdBy": "user",
+      "creationSource": "web",
+      "id": "thread",
+      "projectId": "project",
+      "title": "Thread",
+      "providerInstanceId": "codex",
+      "modelSelection": {
+        "instanceId": "codex",
+        "model": "default"
+      },
+      "runtimeMode": "approval-required",
+      "interactionMode": "default",
+      "branch": null,
+      "worktreePath": null,
+      "activeProviderThreadId": null,
+      "lineage": {
+        "parentThreadId": null,
+        "relationshipToParent": null,
+        "rootThreadId": "thread"
+      },
+      "forkedFrom": null,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "archivedAt": null,
+      "settledOverride": null,
+      "settledAt": null,
+      "lastVisitedAt": "2026-01-01T00:00:00.000Z",
+      "deletedAt": null
+    },
+    "runs": [],
+    "attempts": [],
+    "nodes": [],
+    "subagents": [],
+    "providerSessions": [],
+    "providerThreads": [],
+    "providerTurns": [],
+    "runtimeRequests": [],
+    "messages": [],
+    "plans": [],
+    "turnItems": [],
+    "checkpointScopes": [],
+    "checkpoints": [],
+    "contextHandoffs": [],
+    "contextTransfers": [],
+    "visibleTurnItems": [],
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  "run": {
+    "id": "run",
+    "threadId": "thread",
+    "ordinal": 1,
+    "providerInstanceId": "codex",
+    "modelSelection": {
+      "instanceId": "codex",
+      "model": "default"
+    },
+    "providerThreadId": null,
+    "userMessageId": "message",
+    "rootNodeId": null,
+    "activeAttemptId": null,
+    "status": "queued",
+    "requestedAt": "2026-01-01T00:00:00.000Z",
+    "startedAt": null,
+    "completedAt": null,
+    "checkpointId": null,
+    "contextHandoffId": null
+  },
+  "userItem": {
+    "id": "item",
+    "threadId": "thread",
+    "runId": "run",
+    "nodeId": null,
+    "providerThreadId": null,
+    "providerTurnId": null,
+    "nativeItemRef": null,
+    "parentItemId": null,
+    "ordinal": 0,
+    "status": "completed",
+    "title": null,
+    "startedAt": "2026-01-01T00:00:00.000Z",
+    "completedAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "createdBy": "user",
+    "creationSource": "web",
+    "type": "user_message",
+    "messageId": "message",
+    "inputIntent": "turn_start",
+    "text": "",
+    "attachments": []
+  },
+  "assistantItem": {
+    "id": "item",
+    "threadId": "thread",
+    "runId": "run",
+    "nodeId": null,
+    "providerThreadId": null,
+    "providerTurnId": null,
+    "nativeItemRef": null,
+    "parentItemId": null,
+    "ordinal": 0,
+    "status": "completed",
+    "title": null,
+    "startedAt": "2026-01-01T00:00:00.000Z",
+    "completedAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "type": "assistant_message",
+    "messageId": "message",
+    "text": "",
+    "streaming": false
+  },
+  "approvalItem": {
+    "id": "item",
+    "threadId": "thread",
+    "runId": "run",
+    "nodeId": null,
+    "providerThreadId": null,
+    "providerTurnId": null,
+    "nativeItemRef": null,
+    "parentItemId": null,
+    "ordinal": 0,
+    "status": "completed",
+    "title": null,
+    "startedAt": "2026-01-01T00:00:00.000Z",
+    "completedAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z",
+    "type": "approval_request",
+    "requestId": "request",
+    "requestKind": "command"
+  },
+  "runtimeRequest": {
+    "id": "request",
+    "nodeId": "node",
+    "providerTurnId": null,
+    "nativeRequestRef": null,
+    "kind": "command",
+    "status": "pending",
+    "responseCapability": {
+      "type": "live",
+      "providerSessionId": "session"
+    },
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "resolvedAt": null
+  },
+  "methods": {
+    "projectsListEntries": "projects.listEntries",
+    "projectsListIgnoredFiles": "projects.listIgnoredFiles",
+    "projectsReadFile": "projects.readFile",
+    "projectsSearchContents": "projects.searchContents",
+    "projectsSearchEntries": "projects.searchEntries",
+    "projectsWriteFile": "projects.writeFile",
+    "projectsMutate": "projects.mutate",
+    "projectsEnsureScratch": "projects.ensureScratch",
+    "projectsCreateNew": "projects.createNew",
+    "projectsCreateFromThread": "projects.createFromThread",
+    "shellOpenInEditor": "shell.openInEditor",
+    "filesystemBrowse": "filesystem.browse",
+    "workspaceListFolders": "workspace.listFolders",
+    "workspaceScanFolders": "workspace.scanFolders",
+    "workspaceTaskFolder": "workspace.taskFolder",
+    "workspaceAddTaskFolderRepository": "workspace.addTaskFolderRepository",
+    "filesystemGetMetadata": "filesystem.getMetadata",
+    "agentSessionsScan": "agentSessions.scan",
+    "agentSessionsImport": "agentSessions.import",
+    "assetsCreateUrl": "assets.createUrl",
+    "assetsPersistChatAttachments": "assets.persistChatAttachments",
+    "attachmentsCreateUploadUrl": "attachments.createUploadUrl",
+    "attachmentsDelete": "attachments.delete",
+    "mcpAppsCallTool": "mcpApps.callTool",
+    "mcpAppsToolInfo": "mcpApps.toolInfo",
+    "mcpAppsReadResource": "mcpApps.readResource",
+    "mcpAppsUpdateModelContext": "mcpApps.updateModelContext",
+    "providerUploadFeedback": "provider.uploadFeedback",
+    "providerMcpSignInStart": "provider.mcpSignIn.start",
+    "providerMcpSignInComplete": "provider.mcpSignIn.complete",
+    "providerAuthStart": "provider.auth.start",
+    "providerConsumeResetCredit": "provider.consumeResetCredit",
+    "providerAuthComplete": "provider.auth.complete",
+    "chatGptReconnectProfile": "provider.chatgpt.reconnect-profile",
+    "chatGptImportProfile": "provider.chatgpt.import-profile",
+    "chatGptHandoffSubscribe": "provider.chatgpt.handoff.subscribe",
+    "providerAuthRespond": "provider.auth.respond",
+    "providerAuthCancel": "provider.auth.cancel",
+    "providerAuthRemoveMethod": "provider.auth.removeMethod",
+    "providerAuthLogout": "provider.auth.logout",
+    "providerAuthSubscribe": "provider.auth.subscribe",
+    "providerInstallStart": "provider.install.start",
+    "providerInstallCancel": "provider.install.cancel",
+    "providerInstallSubscribe": "provider.install.subscribe",
+    "providerInstallRemove": "provider.install.remove",
+    "vcsPull": "vcs.pull",
+    "vcsRefreshStatus": "vcs.refreshStatus",
+    "vcsListRefs": "vcs.listRefs",
+    "vcsCreateWorktree": "vcs.createWorktree",
+    "vcsRemoveWorktree": "vcs.removeWorktree",
+    "vcsCreateRef": "vcs.createRef",
+    "vcsSwitchRef": "vcs.switchRef",
+    "vcsInit": "vcs.init",
+    "gitRunStackedAction": "git.runStackedAction",
+    "gitResolvePullRequest": "git.resolvePullRequest",
+    "gitPreparePullRequestThread": "git.preparePullRequestThread",
+    "reviewGetBranchCommits": "review.getBranchCommits",
+    "reviewGetDiffPreview": "review.getDiffPreview",
+    "reviewGetDiffFileContents": "review.getDiffFileContents",
+    "terminalOpen": "terminal.open",
+    "terminalAttach": "terminal.attach",
+    "terminalObserve": "terminal.observe",
+    "terminalWrite": "terminal.write",
+    "terminalResize": "terminal.resize",
+    "terminalClear": "terminal.clear",
+    "terminalClose": "terminal.close",
+    "previewOpen": "preview.open",
+    "previewResize": "preview.resize",
+    "previewAdjust": "preview.adjust",
+    "previewClose": "preview.close",
+    "previewList": "preview.list",
+    "previewClearProfile": "preview.clearProfile",
+    "previewReportProfiles": "preview.reportProfiles",
+    "previewReportStatus": "preview.reportStatus",
+    "previewStopLocalServer": "preview.stopLocalServer",
+    "deviceConfigure": "device.configure",
+    "deviceList": "device.list",
+    "deviceTestHost": "device.testHost",
+    "deviceEasAccount": "device.easAccount",
+    "deviceSimlockIdentity": "device.simlockIdentity",
+    "deviceOpen": "device.open",
+    "deviceClose": "device.close",
+    "deviceShutdown": "device.shutdown",
+    "deviceDetail": "device.detail",
+    "deviceAction": "device.action",
+    "serverProbe": "server.probe",
+    "serverGetConfig": "server.getConfig",
+    "serverGetNpmRelease": "server.getNpmRelease",
+    "serverRefreshProviders": "server.refreshProviders",
+    "serverUpdateProvider": "server.updateProvider",
+    "serverUpdateServer": "server.updateServer",
+    "serverUpdateServerWithProgress": "server.updateServerWithProgress",
+    "serverCommitDesktopUpdate": "server.commitDesktopUpdate",
+    "serverUpsertKeybinding": "server.upsertKeybinding",
+    "serverRemoveKeybinding": "server.removeKeybinding",
+    "serverRunStorageCleanup": "server.runStorageCleanup",
+    "serverGetStorageCleanupReport": "server.getStorageCleanupReport",
+    "serverGetDatabaseStorage": "server.getDatabaseStorage",
+    "serverGetDiskSpace": "server.getDiskSpace",
+    "serverInspectStorage": "server.inspectStorage",
+    "serverManageStorage": "server.manageStorage",
+    "serverStorageTidyState": "server.storageTidyState",
+    "serverStorageTidyAct": "server.storageTidyAct",
+    "serverReclaimDatabaseSpace": "server.reclaimDatabaseSpace",
+    "peerLinksList": "peerLinks.list",
+    "peerLinksNames": "peerLinks.names",
+    "peerLinksLink": "peerLinks.link",
+    "peerLinksUnlink": "peerLinks.unlink",
+    "peerLinksAnswerRequest": "peerLinks.answerRequest",
+    "peerLinksSubscribeThread": "peerLinks.subscribeThread",
+    "peerLinksThreadHistoryPage": "peerLinks.threadHistoryPage",
+    "peerLinksThreadItem": "peerLinks.threadItem",
+    "peerLinksPairClient": "peerLinks.pairClient",
+    "peerLinksPairLink": "peerLinks.pairLink",
+    "serverGetSettings": "server.getSettings",
+    "serverUpdateSettings": "server.updateSettings",
+    "serverDiscoverSourceControl": "server.discoverSourceControl",
+    "serverCheckSecretSource": "server.checkSecretSource",
+    "serverSearchAcpRegistry": "server.searchAcpRegistry",
+    "serverPrepareAcpRegistryAgent": "server.prepareAcpRegistryAgent",
+    "serverUninstallAcpRegistryManagedBinary": "server.uninstallAcpRegistryManagedBinary",
+    "serverAcceptAcpRegistryUrlAuth": "server.acceptAcpRegistryUrlAuth",
+    "serverListAcpRegistrySessions": "server.listAcpRegistrySessions",
+    "serverImportAcpRegistrySession": "server.importAcpRegistrySession",
+    "serverDeleteAcpRegistrySession": "server.deleteAcpRegistrySession",
+    "serverListAcpRegistryProviders": "server.listAcpRegistryProviders",
+    "serverSetAcpRegistryProvider": "server.setAcpRegistryProvider",
+    "serverDisableAcpRegistryProvider": "server.disableAcpRegistryProvider",
+    "serverLogoutAcpRegistry": "server.logoutAcpRegistry",
+    "serverGetTraceDiagnostics": "server.getTraceDiagnostics",
+    "serverGetProcessDiagnostics": "server.getProcessDiagnostics",
+    "serverGetHostResources": "server.getHostResources",
+    "serverGetProcessResourceHistory": "server.getProcessResourceHistory",
+    "serverGetResourceTelemetryHistory": "server.getResourceTelemetryHistory",
+    "serverRetryResourceTelemetry": "server.retryResourceTelemetry",
+    "serverCheckOtlpEndpoint": "server.checkOtlpEndpoint",
+    "serverSuggestSidebarCategories": "server.suggestSidebarCategories",
+    "serverListTextGeneratorModels": "server.listTextGeneratorModels",
+    "serverPrepareTriage": "server.prepareTriage",
+    "serverSignalProcess": "server.signalProcess",
+    "serverReportClientActivity": "server.reportClientActivity",
+    "serverGetUsageSummary": "server.getUsageSummary",
+    "serverRefreshUsageRates": "server.refreshUsageRates",
+    "scheduledTasksSubscribe": "scheduledTasks.subscribe",
+    "scheduledTasksUpsert": "scheduledTasks.upsert",
+    "scheduledTasksSetEnabled": "scheduledTasks.setEnabled",
+    "scheduledTasksDelete": "scheduledTasks.delete",
+    "scheduledTasksRunNow": "scheduledTasks.runNow",
+    "scheduledTasksRotateWebhookToken": "scheduledTasks.rotateWebhookToken",
+    "secretsAnswerRequest": "secrets.answerRequest",
+    "guestShareCreate": "guestShare.create",
+    "scheduledTasksListWebhookDeliveries": "scheduledTasks.listWebhookDeliveries",
+    "scheduledTasksGetWebhookDelivery": "scheduledTasks.getWebhookDelivery",
+    "cloudGetRelayClientStatus": "cloud.getRelayClientStatus",
+    "cloudInstallRelayClient": "cloud.installRelayClient",
+    "pullRequestsList": "pullRequests.list",
+    "pullRequestsListStats": "pullRequests.listStats",
+    "pullRequestsFilterOptions": "pullRequests.filterOptions",
+    "pullRequestsSummary": "pullRequests.summary",
+    "pullRequestsRouting": "pullRequests.routing",
+    "pullRequestsRoutingIdentity": "pullRequests.routingIdentity",
+    "pullRequestsStack": "pullRequests.stack",
+    "pullRequestsLinkedThreads": "pullRequests.linkedThreads",
+    "pullRequestsDetail": "pullRequests.detail",
+    "pullRequestsPreview": "pullRequests.preview",
+    "pullRequestsChecks": "pullRequests.checks",
+    "pullRequestsActivity": "pullRequests.activity",
+    "pullRequestsReviewGuide": "pullRequests.reviewGuide",
+    "pullRequestsGenerateReviewGuide": "pullRequests.generateReviewGuide",
+    "pullRequestsThreadComments": "pullRequests.threadComments",
+    "pullRequestsDiffFileContents": "pullRequests.diffFileContents",
+    "pullRequestsFilesViewed": "pullRequests.filesViewed",
+    "pullRequestsChangeBreakdown": "pullRequests.changeBreakdown",
+    "pullRequestsSetFilesViewed": "pullRequests.setFilesViewed",
+    "pullRequestsRunAction": "pullRequests.runAction",
+    "pullRequestsUpdate": "pullRequests.update",
+    "pullRequestsComment": "pullRequests.comment",
+    "pullRequestsUpdateComment": "pullRequests.updateComment",
+    "pullRequestsSubmitReview": "pullRequests.submitReview",
+    "pullRequestsReplyToThread": "pullRequests.replyToThread",
+    "pullRequestsSetThreadResolution": "pullRequests.setThreadResolution",
+    "pullRequestsSetReaction": "pullRequests.setReaction",
+    "pullRequestsInvalidate": "pullRequests.invalidate",
+    "pullRequestsReportState": "pullRequests.reportState",
+    "pullRequestsSubscribeRefreshes": "pullRequests.subscribeRefreshes",
+    "pullRequestsSubscribeLinkedThreadRefreshes": "pullRequests.subscribeLinkedThreadRefreshes",
+    "pullRequestsReviewerCandidates": "pullRequests.reviewerCandidates",
+    "pullRequestsRequestReviewers": "pullRequests.requestReviewers",
+    "pullRequestsLabelCandidates": "pullRequests.labelCandidates",
+    "pullRequestsSetLabels": "pullRequests.setLabels",
+    "issuesList": "issues.list",
+    "issuesDetail": "issues.detail",
+    "issuesComments": "issues.comments",
+    "issuesTemplates": "issues.templates",
+    "issuesCandidates": "issues.candidates",
+    "issuesCreate": "issues.create",
+    "issuesComment": "issues.comment",
+    "issuesUpdate": "issues.update",
+    "issuesSetState": "issues.setState",
+    "issuesReact": "issues.react",
+    "issuesLinkedThreads": "issues.linkedThreads",
+    "issueTrackersList": "issueTrackers.list",
+    "issueTrackersConnect": "issueTrackers.connect",
+    "issueTrackersBindProject": "issueTrackers.bindProject",
+    "sourceControlLookupRepository": "sourceControl.lookupRepository",
+    "sourceControlCloneRepository": "sourceControl.cloneRepository",
+    "sourceControlPublishRepository": "sourceControl.publishRepository",
+    "sourceControlSignInStart": "sourceControl.signInStart",
+    "sourceControlSignInWait": "sourceControl.signInWait",
+    "sourceControlSignInCancel": "sourceControl.signInCancel",
+    "sourceControlAppAccess": "sourceControl.appAccess",
+    "sourceControlStarred": "sourceControl.starred",
+    "sourceControlStar": "sourceControl.star",
+    "projectCloneStart": "projectClone.start",
+    "projectCloneCancel": "projectClone.cancel",
+    "projectCloneRetry": "projectClone.retry",
+    "subscribeProjectClones": "subscribeProjectClones",
+    "subscribeVcsStatus": "subscribeVcsStatus",
+    "subscribeVcsBranch": "subscribeVcsBranch",
+    "vcsRefreshBranch": "vcs.refreshBranch",
+    "subscribeWorktreeSetup": "subscribeWorktreeSetup",
+    "worktreeSetupCancel": "worktreeSetup.cancel",
+    "subscribeTerminalMetadata": "subscribeTerminalMetadata",
+    "subscribePreviewEvents": "subscribePreviewEvents",
+    "subscribeDiscoveredLocalServers": "subscribeDiscoveredLocalServers",
+    "subscribeDeviceState": "subscribeDeviceState",
+    "subscribeServerConfig": "subscribeServerConfig",
+    "subscribeServerLifecycle": "subscribeServerLifecycle",
+    "subscribeAuthAccess": "subscribeAuthAccess",
+    "subscribeResourceTelemetry": "subscribeResourceTelemetry",
+    "dispatchCommand": "orchestration.dispatchCommand",
+    "getTurnDiff": "orchestration.getTurnDiff",
+    "getFullThreadDiff": "orchestration.getFullThreadDiff",
+    "searchThreads": "orchestration.searchThreads",
+    "searchThread": "orchestration.searchThread",
+    "searchThreadStream": "orchestration.searchThreadStream",
+    "getArchivedShellSnapshot": "orchestration.getArchivedShellSnapshot",
+    "getThreadFamily": "orchestration.getThreadFamily",
+    "getThreadTitles": "orchestration.getThreadTitles",
+    "getThreadLinkMetadata": "orchestration.getThreadLinkMetadata",
+    "getWorktreeThreadIds": "orchestration.getWorktreeThreadIds",
+    "getOlderSettledThreads": "orchestration.getOlderSettledThreads",
+    "getThreadProjection": "orchestration.getThreadProjection",
+    "getWorkflowScript": "orchestration.getWorkflowScript",
+    "getNativeChildWork": "orchestration.getNativeChildWork",
+    "stopWorkflow": "orchestration.stopWorkflow",
+    "forceStopThread": "orchestration.forceStopThread",
+    "getTurnItem": "orchestration.getTurnItem",
+    "launchThread": "orchestration.launchThread",
+    "subscribeShell": "orchestration.subscribeShell",
+    "subscribeThread": "orchestration.subscribeThread",
+    "subscribeCommandOutput": "orchestration.subscribeCommandOutput",
+    "subscribePromptSuggestion": "orchestration.subscribePromptSuggestion"
+  }
+}

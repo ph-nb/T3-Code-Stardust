@@ -1,4 +1,5 @@
 import { DEFAULT_HOSTED_APP_URL } from "@t3tools/shared/connectAuth";
+import { readNativeDesktopBootstrap } from "./nativeDesktop";
 
 import { getPairingTokenFromUrl, setPairingTokenOnUrl } from "@t3tools/shared/remote";
 
@@ -32,6 +33,7 @@ function originFromUrl(value: string): string | null {
 }
 
 export function isHostedStaticApp(url?: URL): boolean {
+  if (readNativeDesktopBootstrap()) return false;
   if (configuredBackendUrl()) {
     return false;
   }
