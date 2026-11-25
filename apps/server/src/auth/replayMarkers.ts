@@ -11,7 +11,14 @@ import * as ServerConfig from "../config.ts";
 import { forkParked } from "../serverActivation.ts";
 import { DPOP_REPLAY_MARKER_PREFIX } from "./dpop.ts";
 
-const REPLAY_MARKER_PREFIXES = [DPOP_REPLAY_MARKER_PREFIX];
+// Old cloud proofs stay on the expiry cleanup list after cloud account support is removed.
+const REPLAY_MARKER_PREFIXES = [
+  DPOP_REPLAY_MARKER_PREFIX,
+  "cloud-mint-nonce-",
+  "cloud-mint-jti-",
+  "cloud-health-nonce-",
+  "cloud-health-jti-",
+];
 
 /**
  * A marker only matters while its DPoP proof can pass the time check.
