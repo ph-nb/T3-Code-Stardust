@@ -79,6 +79,7 @@ const root = NodePath.resolve(import.meta.dirname, "../../..");
 const executable = process.env.STARDUST_LOCAL_BINARY ?? process.argv[2];
 if (!executable)
   throw new Error("Pass the stardust-local binary path or set STARDUST_LOCAL_BINARY");
+await NodeFSP.mkdir(NodePath.join(root, ".t3"), { recursive: true });
 const directory = await NodeFSP.mkdtemp(NodePath.join(root, ".t3/native-local-proof-"));
 const workspace = NodePath.join(directory, "workspace");
 await NodeFSP.mkdir(workspace);
