@@ -6,6 +6,7 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 
 import type { DesktopUpdateCheckResult, DesktopUpdateState } from "@t3tools/contracts";
+import { DEFAULT_CLIENT_SETTINGS } from "@t3tools/contracts/settings";
 import * as Electron from "electron";
 import { vi } from "vite-plus/test";
 
@@ -22,6 +23,7 @@ import * as DesktopEnvironment from "../app/DesktopEnvironment.ts";
 import * as DesktopUpdates from "../updates/DesktopUpdates.ts";
 import { createInitialDesktopUpdateState } from "../updates/updateMachine.ts";
 import * as DesktopWindow from "./DesktopWindow.ts";
+import * as DesktopClientSettings from "../settings/DesktopClientSettings.ts";
 
 const environmentInput = {
   dirname: "/repo/apps/desktop/dist-electron",
@@ -60,6 +62,7 @@ const layerElectronApp = Layer.succeed(ElectronApp.ElectronApp, {
 } satisfies ElectronApp.ElectronApp["Service"]);
 
 interface MenuServices {
+  readonly language?: string | null;
   readonly checkResult?: DesktopUpdateCheckResult;
   readonly shownMessageBox?: Deferred.Deferred<Electron.MessageBoxOptions>;
 }
@@ -136,6 +139,16 @@ const configureMenu = (
   }).pipe(
     Effect.provide(
       DesktopApplicationMenu.layer.pipe(
+        Layer.provideMerge(
+          Layer.succeed(DesktopClientSettings.DesktopClientSettings, {
+            get: Effect.succeed(
+              services.language === null
+                ? Option.none()
+                : Option.some({ ...DEFAULT_CLIENT_SETTINGS, language: services.language ?? "en" }),
+            ),
+            set: () => Effect.die("unexpected settings write"),
+          }),
+        ),
         Layer.provideMerge(layerElectronMenu(applicationMenuTemplate)),
         Layer.provideMerge(layerDesktopWindow(selectedAction)),
         Layer.provideMerge(layerDesktopUpdates(services)),
@@ -199,6 +212,24 @@ const checkForUpdatesFromMacMenu = (state: Partial<DesktopUpdateState>) =>
   });
 
 describe("DesktopApplicationMenu", () => {
+  it.effect(
+    "starts a new Windows menu in Chinese on an English system and keeps an explicit English choice",
+    () =>
+      Effect.gen(function* () {
+        for (const language of [null, "en"] as const) {
+          const template = yield* Deferred.make<readonly Electron.MenuItemConstructorOptions[]>();
+          yield* configureMenu(
+            yield* Deferred.make<string>(),
+            template,
+            { platform: "win32" },
+            { language },
+          );
+          const labels = (yield* Deferred.await(template)).map((item) => item.label);
+          assert.include(labels, language === null ? "文件" : "File");
+          assert.include(labels, language === null ? "编辑" : "Edit");
+        }
+      }),
+  );
   it.effect("leaves the accelerator to Chromium instead of injecting a paste", () =>
     Effect.gen(function* () {
       const selectedAction = yield* Deferred.make<string>();

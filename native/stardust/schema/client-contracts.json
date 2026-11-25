@@ -1,0 +1,1167 @@
+{
+  "schemaVersion": 1,
+  "rpcs": [
+    {
+      "tag": "agentSessions.import",
+      "streaming": false
+    },
+    {
+      "tag": "agentSessions.scan",
+      "streaming": false
+    },
+    {
+      "tag": "assets.createUrl",
+      "streaming": false
+    },
+    {
+      "tag": "assets.persistChatAttachments",
+      "streaming": false
+    },
+    {
+      "tag": "attachments.createUploadUrl",
+      "streaming": false
+    },
+    {
+      "tag": "attachments.delete",
+      "streaming": false
+    },
+    {
+      "tag": "cloud.getRelayClientStatus",
+      "streaming": false
+    },
+    {
+      "tag": "cloud.installRelayClient",
+      "streaming": true
+    },
+    {
+      "tag": "device.action",
+      "streaming": false
+    },
+    {
+      "tag": "device.close",
+      "streaming": false
+    },
+    {
+      "tag": "device.configure",
+      "streaming": false
+    },
+    {
+      "tag": "device.detail",
+      "streaming": false
+    },
+    {
+      "tag": "device.easAccount",
+      "streaming": false
+    },
+    {
+      "tag": "device.list",
+      "streaming": false
+    },
+    {
+      "tag": "device.open",
+      "streaming": false
+    },
+    {
+      "tag": "device.shutdown",
+      "streaming": false
+    },
+    {
+      "tag": "device.simlockIdentity",
+      "streaming": false
+    },
+    {
+      "tag": "device.testHost",
+      "streaming": false
+    },
+    {
+      "tag": "filesystem.browse",
+      "streaming": false
+    },
+    {
+      "tag": "filesystem.getMetadata",
+      "streaming": false
+    },
+    {
+      "tag": "git.preparePullRequestThread",
+      "streaming": false
+    },
+    {
+      "tag": "git.resolvePullRequest",
+      "streaming": false
+    },
+    {
+      "tag": "git.runStackedAction",
+      "streaming": true
+    },
+    {
+      "tag": "guestShare.create",
+      "streaming": false
+    },
+    {
+      "tag": "issues.candidates",
+      "streaming": false
+    },
+    {
+      "tag": "issues.comment",
+      "streaming": false
+    },
+    {
+      "tag": "issues.comments",
+      "streaming": false
+    },
+    {
+      "tag": "issues.create",
+      "streaming": false
+    },
+    {
+      "tag": "issues.detail",
+      "streaming": false
+    },
+    {
+      "tag": "issues.linkedThreads",
+      "streaming": false
+    },
+    {
+      "tag": "issues.list",
+      "streaming": false
+    },
+    {
+      "tag": "issues.react",
+      "streaming": false
+    },
+    {
+      "tag": "issues.setState",
+      "streaming": false
+    },
+    {
+      "tag": "issues.templates",
+      "streaming": false
+    },
+    {
+      "tag": "issues.update",
+      "streaming": false
+    },
+    {
+      "tag": "issueTrackers.bindProject",
+      "streaming": false
+    },
+    {
+      "tag": "issueTrackers.connect",
+      "streaming": false
+    },
+    {
+      "tag": "issueTrackers.list",
+      "streaming": false
+    },
+    {
+      "tag": "mcpApps.callTool",
+      "streaming": false
+    },
+    {
+      "tag": "mcpApps.readResource",
+      "streaming": false
+    },
+    {
+      "tag": "mcpApps.toolInfo",
+      "streaming": false
+    },
+    {
+      "tag": "mcpApps.updateModelContext",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.dispatchCommand",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.forceStopThread",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getArchivedShellSnapshot",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getFullThreadDiff",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getNativeChildWork",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getOlderSettledThreads",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getThreadFamily",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getThreadLinkMetadata",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getThreadProjection",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getThreadTitles",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getTurnDiff",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getTurnItem",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getWorkflowScript",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.getWorktreeThreadIds",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.launchThread",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.searchThread",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.searchThreads",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.searchThreadStream",
+      "streaming": true
+    },
+    {
+      "tag": "orchestration.stopWorkflow",
+      "streaming": false
+    },
+    {
+      "tag": "orchestration.subscribeCommandOutput",
+      "streaming": true
+    },
+    {
+      "tag": "orchestration.subscribePromptSuggestion",
+      "streaming": true
+    },
+    {
+      "tag": "orchestration.subscribeShell",
+      "streaming": true
+    },
+    {
+      "tag": "orchestration.subscribeThread",
+      "streaming": true
+    },
+    {
+      "tag": "peerLinks.answerRequest",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.link",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.list",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.names",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.pairClient",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.pairLink",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.subscribeThread",
+      "streaming": true
+    },
+    {
+      "tag": "peerLinks.threadHistoryPage",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.threadItem",
+      "streaming": false
+    },
+    {
+      "tag": "peerLinks.unlink",
+      "streaming": false
+    },
+    {
+      "tag": "preview.adjust",
+      "streaming": false
+    },
+    {
+      "tag": "preview.clearProfile",
+      "streaming": false
+    },
+    {
+      "tag": "preview.close",
+      "streaming": false
+    },
+    {
+      "tag": "preview.list",
+      "streaming": false
+    },
+    {
+      "tag": "preview.open",
+      "streaming": false
+    },
+    {
+      "tag": "preview.reportProfiles",
+      "streaming": false
+    },
+    {
+      "tag": "preview.reportStatus",
+      "streaming": false
+    },
+    {
+      "tag": "preview.resize",
+      "streaming": false
+    },
+    {
+      "tag": "preview.stopLocalServer",
+      "streaming": false
+    },
+    {
+      "tag": "projectClone.cancel",
+      "streaming": false
+    },
+    {
+      "tag": "projectClone.retry",
+      "streaming": false
+    },
+    {
+      "tag": "projectClone.start",
+      "streaming": false
+    },
+    {
+      "tag": "projects.createFromThread",
+      "streaming": false
+    },
+    {
+      "tag": "projects.createNew",
+      "streaming": false
+    },
+    {
+      "tag": "projects.ensureScratch",
+      "streaming": false
+    },
+    {
+      "tag": "projects.listEntries",
+      "streaming": false
+    },
+    {
+      "tag": "projects.listIgnoredFiles",
+      "streaming": false
+    },
+    {
+      "tag": "projects.mutate",
+      "streaming": false
+    },
+    {
+      "tag": "projects.readFile",
+      "streaming": false
+    },
+    {
+      "tag": "projects.searchContents",
+      "streaming": false
+    },
+    {
+      "tag": "projects.searchEntries",
+      "streaming": false
+    },
+    {
+      "tag": "projects.writeFile",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.cancel",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.complete",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.logout",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.removeMethod",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.respond",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.start",
+      "streaming": false
+    },
+    {
+      "tag": "provider.auth.subscribe",
+      "streaming": true
+    },
+    {
+      "tag": "provider.chatgpt.handoff.subscribe",
+      "streaming": true
+    },
+    {
+      "tag": "provider.chatgpt.import-profile",
+      "streaming": false
+    },
+    {
+      "tag": "provider.chatgpt.reconnect-profile",
+      "streaming": false
+    },
+    {
+      "tag": "provider.consumeResetCredit",
+      "streaming": false
+    },
+    {
+      "tag": "provider.install.cancel",
+      "streaming": false
+    },
+    {
+      "tag": "provider.install.remove",
+      "streaming": false
+    },
+    {
+      "tag": "provider.install.start",
+      "streaming": false
+    },
+    {
+      "tag": "provider.install.subscribe",
+      "streaming": true
+    },
+    {
+      "tag": "provider.mcpSignIn.complete",
+      "streaming": false
+    },
+    {
+      "tag": "provider.mcpSignIn.start",
+      "streaming": false
+    },
+    {
+      "tag": "provider.uploadFeedback",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.activity",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.changeBreakdown",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.checks",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.comment",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.detail",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.diffFileContents",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.filesViewed",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.filterOptions",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.generateReviewGuide",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.invalidate",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.labelCandidates",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.linkedThreads",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.list",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.listStats",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.preview",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.replyToThread",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.reportState",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.requestReviewers",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.reviewerCandidates",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.reviewGuide",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.routing",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.routingIdentity",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.runAction",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.setFilesViewed",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.setLabels",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.setReaction",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.setThreadResolution",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.stack",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.submitReview",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.subscribeLinkedThreadRefreshes",
+      "streaming": true
+    },
+    {
+      "tag": "pullRequests.subscribeRefreshes",
+      "streaming": true
+    },
+    {
+      "tag": "pullRequests.summary",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.threadComments",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.update",
+      "streaming": false
+    },
+    {
+      "tag": "pullRequests.updateComment",
+      "streaming": false
+    },
+    {
+      "tag": "review.getBranchCommits",
+      "streaming": false
+    },
+    {
+      "tag": "review.getDiffFileContents",
+      "streaming": false
+    },
+    {
+      "tag": "review.getDiffPreview",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.delete",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.getWebhookDelivery",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.listWebhookDeliveries",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.rotateWebhookToken",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.runNow",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.setEnabled",
+      "streaming": false
+    },
+    {
+      "tag": "scheduledTasks.subscribe",
+      "streaming": true
+    },
+    {
+      "tag": "scheduledTasks.upsert",
+      "streaming": false
+    },
+    {
+      "tag": "secrets.answerRequest",
+      "streaming": false
+    },
+    {
+      "tag": "server.acceptAcpRegistryUrlAuth",
+      "streaming": false
+    },
+    {
+      "tag": "server.checkOtlpEndpoint",
+      "streaming": false
+    },
+    {
+      "tag": "server.checkSecretSource",
+      "streaming": false
+    },
+    {
+      "tag": "server.commitDesktopUpdate",
+      "streaming": false
+    },
+    {
+      "tag": "server.deleteAcpRegistrySession",
+      "streaming": false
+    },
+    {
+      "tag": "server.disableAcpRegistryProvider",
+      "streaming": false
+    },
+    {
+      "tag": "server.discoverSourceControl",
+      "streaming": false
+    },
+    {
+      "tag": "server.getConfig",
+      "streaming": false
+    },
+    {
+      "tag": "server.getDatabaseStorage",
+      "streaming": true
+    },
+    {
+      "tag": "server.getDiskSpace",
+      "streaming": false
+    },
+    {
+      "tag": "server.getHostResources",
+      "streaming": false
+    },
+    {
+      "tag": "server.getNpmRelease",
+      "streaming": false
+    },
+    {
+      "tag": "server.getProcessDiagnostics",
+      "streaming": false
+    },
+    {
+      "tag": "server.getProcessResourceHistory",
+      "streaming": false
+    },
+    {
+      "tag": "server.getResourceTelemetryHistory",
+      "streaming": false
+    },
+    {
+      "tag": "server.getSettings",
+      "streaming": false
+    },
+    {
+      "tag": "server.getStorageCleanupReport",
+      "streaming": true
+    },
+    {
+      "tag": "server.getTraceDiagnostics",
+      "streaming": false
+    },
+    {
+      "tag": "server.getUsageSummary",
+      "streaming": false
+    },
+    {
+      "tag": "server.importAcpRegistrySession",
+      "streaming": false
+    },
+    {
+      "tag": "server.inspectStorage",
+      "streaming": false
+    },
+    {
+      "tag": "server.listAcpRegistryProviders",
+      "streaming": false
+    },
+    {
+      "tag": "server.listAcpRegistrySessions",
+      "streaming": false
+    },
+    {
+      "tag": "server.listTextGeneratorModels",
+      "streaming": false
+    },
+    {
+      "tag": "server.logoutAcpRegistry",
+      "streaming": false
+    },
+    {
+      "tag": "server.manageStorage",
+      "streaming": false
+    },
+    {
+      "tag": "server.prepareAcpRegistryAgent",
+      "streaming": false
+    },
+    {
+      "tag": "server.prepareTriage",
+      "streaming": false
+    },
+    {
+      "tag": "server.probe",
+      "streaming": false
+    },
+    {
+      "tag": "server.reclaimDatabaseSpace",
+      "streaming": false
+    },
+    {
+      "tag": "server.refreshProviders",
+      "streaming": false
+    },
+    {
+      "tag": "server.refreshUsageRates",
+      "streaming": false
+    },
+    {
+      "tag": "server.removeKeybinding",
+      "streaming": false
+    },
+    {
+      "tag": "server.reportClientActivity",
+      "streaming": false
+    },
+    {
+      "tag": "server.retryResourceTelemetry",
+      "streaming": false
+    },
+    {
+      "tag": "server.runStorageCleanup",
+      "streaming": false
+    },
+    {
+      "tag": "server.searchAcpRegistry",
+      "streaming": false
+    },
+    {
+      "tag": "server.setAcpRegistryProvider",
+      "streaming": false
+    },
+    {
+      "tag": "server.signalProcess",
+      "streaming": false
+    },
+    {
+      "tag": "server.storageTidyAct",
+      "streaming": false
+    },
+    {
+      "tag": "server.storageTidyState",
+      "streaming": false
+    },
+    {
+      "tag": "server.suggestSidebarCategories",
+      "streaming": false
+    },
+    {
+      "tag": "server.uninstallAcpRegistryManagedBinary",
+      "streaming": false
+    },
+    {
+      "tag": "server.updateProvider",
+      "streaming": false
+    },
+    {
+      "tag": "server.updateServer",
+      "streaming": false
+    },
+    {
+      "tag": "server.updateServerWithProgress",
+      "streaming": true
+    },
+    {
+      "tag": "server.updateSettings",
+      "streaming": false
+    },
+    {
+      "tag": "server.upsertKeybinding",
+      "streaming": false
+    },
+    {
+      "tag": "shell.openInEditor",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.appAccess",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.cloneRepository",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.lookupRepository",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.publishRepository",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.signInCancel",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.signInStart",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.signInWait",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.star",
+      "streaming": false
+    },
+    {
+      "tag": "sourceControl.starred",
+      "streaming": false
+    },
+    {
+      "tag": "subscribeAuthAccess",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeDeviceState",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeDiscoveredLocalServers",
+      "streaming": true
+    },
+    {
+      "tag": "subscribePreviewEvents",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeProjectClones",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeResourceTelemetry",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeServerConfig",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeServerLifecycle",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeTerminalMetadata",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeVcsBranch",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeVcsStatus",
+      "streaming": true
+    },
+    {
+      "tag": "subscribeWorktreeSetup",
+      "streaming": true
+    },
+    {
+      "tag": "terminal.attach",
+      "streaming": true
+    },
+    {
+      "tag": "terminal.clear",
+      "streaming": false
+    },
+    {
+      "tag": "terminal.close",
+      "streaming": false
+    },
+    {
+      "tag": "terminal.observe",
+      "streaming": true
+    },
+    {
+      "tag": "terminal.open",
+      "streaming": false
+    },
+    {
+      "tag": "terminal.resize",
+      "streaming": false
+    },
+    {
+      "tag": "terminal.write",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.createRef",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.createWorktree",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.init",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.listRefs",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.pull",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.refreshBranch",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.refreshStatus",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.removeWorktree",
+      "streaming": false
+    },
+    {
+      "tag": "vcs.switchRef",
+      "streaming": false
+    },
+    {
+      "tag": "workspace.addTaskFolderRepository",
+      "streaming": false
+    },
+    {
+      "tag": "workspace.listFolders",
+      "streaming": false
+    },
+    {
+      "tag": "workspace.scanFolders",
+      "streaming": false
+    },
+    {
+      "tag": "workspace.taskFolder",
+      "streaming": false
+    },
+    {
+      "tag": "worktreeSetup.cancel",
+      "streaming": false
+    }
+  ],
+  "desktopMethods": [
+    "acknowledgeSnapShot",
+    "appActivation.complete",
+    "appActivation.onRequest",
+    "appActivation.setReady",
+    "appleSpeech.prepare",
+    "appleSpeech.supportedLocales",
+    "appleSpeech.transcribe",
+    "applySnapShotConfig",
+    "bootstrapSshBearerSession",
+    "cancelProviderAuthCallback",
+    "checkForUpdate",
+    "checkSnapShotShortcut",
+    "checkSystemPermission",
+    "cliCommand.addToPath",
+    "cliCommand.getState",
+    "cliCommand.install",
+    "cliCommand.uninstall",
+    "disconnectSshEnvironment",
+    "discoverSshHosts",
+    "dismissSnapShotAnimation",
+    "downloadUpdate",
+    "ensureSshEnvironment",
+    "fetchSshEnvironmentDescriptor",
+    "fetchSshSessionState",
+    "getAdvertisedEndpoints",
+    "getAppBranding",
+    "getClientArchitecture",
+    "getClientPlatform",
+    "getClientSettings",
+    "getConnectionCatalog",
+    "getHostEnvironmentId",
+    "getLocalEnvironmentBearerToken",
+    "getLocalEnvironmentBootstraps",
+    "getLocalEnvironmentEnabled",
+    "getPathForFile",
+    "getPreferredSystemLanguages",
+    "getPrimaryPasteEnabled",
+    "getRelayTelemetryEnabled",
+    "getServerExposureState",
+    "getSnapShotState",
+    "getSystemLocale",
+    "getUpdateState",
+    "getWindowFullscreenState",
+    "getWindowZoomFactor",
+    "getWslState",
+    "installUpdate",
+    "listPendingSnapShots",
+    "onLocalEnvironmentBootstrapsChanged",
+    "onMenuAction",
+    "onNotificationBadgeClear",
+    "onQuitShortcut",
+    "onSnapShotEvent",
+    "onSshPasswordPrompt",
+    "onSshPasswordPromptSettled",
+    "onTrackpadScrollBegin",
+    "onTrackpadScrollEnd",
+    "onUpdateState",
+    "onWindowFullscreenStateChange",
+    "openExternal",
+    "openSystemSettings",
+    "pasteAsText",
+    "pickFolder",
+    "pickProjectFavicon",
+    "pickThemeFiles",
+    "preview.annotationVoice.onEvent",
+    "preview.annotationVoice.update",
+    "preview.cancelPickElement",
+    "preview.captureScreenshot",
+    "preview.clearCache",
+    "preview.clearCookies",
+    "preview.closeTab",
+    "preview.copyArtifactToClipboard",
+    "preview.createTab",
+    "preview.findInPage",
+    "preview.forwardPort",
+    "preview.getPreviewConfig",
+    "preview.goBack",
+    "preview.goForward",
+    "preview.hardReload",
+    "preview.importBrowserCookies",
+    "preview.listBrowserImportSources",
+    "preview.listPortForwards",
+    "preview.navigate",
+    "preview.onFindResult",
+    "preview.onOpenLink",
+    "preview.onPinState",
+    "preview.onPointerEvent",
+    "preview.onPortForwards",
+    "preview.onStateChange",
+    "preview.onTunnelAccessRequest",
+    "preview.openDevTools",
+    "preview.pickElement",
+    "preview.pictureInPicture.close",
+    "preview.pictureInPicture.open",
+    "preview.pinAction",
+    "preview.recording.onInput",
+    "preview.recording.save",
+    "preview.recording.startScreencast",
+    "preview.recording.stopScreencast",
+    "preview.refresh",
+    "preview.registerWebview",
+    "preview.resetZoom",
+    "preview.resolveTunnelAccess",
+    "preview.revealArtifact",
+    "preview.setAnnotationSendEnabled",
+    "preview.setAnnotationTheme",
+    "preview.setAudioMuted",
+    "preview.setCaptureDrawn",
+    "preview.setColorScheme",
+    "preview.setForwardedShortcuts",
+    "preview.setShown",
+    "preview.setZoomFactor",
+    "preview.sharesLoopback",
+    "preview.stopFindInPage",
+    "preview.stopLoading",
+    "preview.stopPortForward",
+    "preview.zoomIn",
+    "preview.zoomOut",
+    "previewSnapShotConfig",
+    "probeRemoteEditors",
+    "readMedia",
+    "readSnapShot",
+    "receiveProviderAuthCallback",
+    "requestSnapShotPermissions",
+    "resolveSshHost",
+    "resolveSshPasswordPrompt",
+    "restartAudioService",
+    "revealWindow",
+    "setClientSettings",
+    "setConnectionCatalog",
+    "setLocalEnvironmentEnabled",
+    "setNotificationBadge",
+    "setServerExposureMode",
+    "setSnapShotAnimationDestination",
+    "setSnapShotShortcutSuppressed",
+    "setTailscaleServeEnabled",
+    "setTheme",
+    "setUpdateAutoInstall",
+    "setUpdateChannel",
+    "setWslBackendEnabled",
+    "setWslDistro",
+    "setWslOnly",
+    "setupSnapShot",
+    "showContextMenu",
+    "startFileDrag",
+    "toLocalBackendPath",
+    "webLinks.onOpen",
+    "webLinks.setReady"
+  ]
+}

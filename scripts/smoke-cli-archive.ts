@@ -2,12 +2,15 @@
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Duration from "effect/Duration";
+import * as Config from "effect/Config";
+import * as Deferred from "effect/Deferred";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
 import * as FileSystem from "effect/FileSystem";
 import * as Layer from "effect/Layer";
 import * as Logger from "effect/Logger";
 import * as Path from "effect/Path";
+import * as Redacted from "effect/Redacted";
 import * as Schedule from "effect/Schedule";
 import * as Schema from "effect/Schema";
 import * as Stream from "effect/Stream";
@@ -41,13 +44,14 @@ const runExecutable = Effect.fn("runExecutable")(function* (
   executable: string,
   args: ReadonlyArray<string>,
   cwd: string,
+  environment: Readonly<Record<string, string>> = {},
 ) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const child = yield* spawner.spawn(
     ChildProcess.make(executable, args, {
       cwd,
       // Isolate system Node and inherited launcher context from the archive smoke check.
-      env: { PATH: "", HOME: cwd, USERPROFILE: cwd, TMPDIR: cwd, TEMP: cwd },
+      env: { PATH: "", HOME: cwd, USERPROFILE: cwd, TMPDIR: cwd, TEMP: cwd, ...environment },
       extendEnv: false,
     }),
   );
@@ -61,6 +65,7 @@ const runExecutable = Effect.fn("runExecutable")(function* (
 const smokeCliArchive = Effect.fn("smokeCliArchive")(function* (input: {
   readonly archive: string;
   readonly expectVersion: string;
+  readonly postgres: boolean;
 }) {
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -147,29 +152,56 @@ const smokeCliArchive = Effect.fn("smokeCliArchive")(function* (input: {
   const net = yield* NetService.NetService;
   const port = yield* net.findAvailablePort(47700);
   const home = path.join(scratch, "home");
+  const environment: Record<string, string> = {
+    PATH: "",
+    HOME: home,
+    USERPROFILE: home,
+    TMPDIR: scratch,
+    TEMP: scratch,
+    T3CODE_HOME: home,
+    T3CODE_TELEMETRY_ENABLED: "false",
+    T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD: "false",
+    T3CODE_DATABASE_BACKEND: input.postgres ? "postgres" : "sqlite",
+  };
+  if (input.postgres) {
+    environment.T3CODE_DATABASE_URL = Redacted.value(
+      yield* Config.Redacted("STARDUST_TEST_POSTGRES_URL"),
+    );
+    environment.T3CODE_REDIS_URL = Redacted.value(
+      yield* Config.Redacted("STARDUST_TEST_REDIS_URL"),
+    );
+    environment.T3CODE_POSTGRES_SCHEMA = `archive_smoke_${process.pid}`;
+  }
+  const readySignal = yield* Deferred.make<void>();
   const server = yield* spawner.spawn(
     ChildProcess.make(
       executable,
       ["serve", "--host", "127.0.0.1", "--port", String(port), "--no-browser"],
       {
         cwd: contentDir,
-        env: {
-          PATH: "",
-          HOME: home,
-          USERPROFILE: home,
-          TMPDIR: scratch,
-          TEMP: scratch,
-          T3CODE_HOME: home,
-          // The archive has a release channel built in, so its events would
-          // look like a real new install.
-          T3CODE_TELEMETRY_ENABLED: "false",
-        },
+        env: environment,
         extendEnv: false,
       },
     ),
   );
   const output = yield* Effect.forkScoped(
-    Effect.all([collect(server.stdout), collect(server.stderr)]),
+    Effect.all([
+      server.stdout.pipe(
+        Stream.decodeText(),
+        Stream.runFoldEffect(
+          () => "",
+          (previous, chunk) => {
+            const output = previous + chunk;
+            return (
+              output.includes("T3 Code server is ready.")
+                ? Deferred.succeed(readySignal, undefined)
+                : Effect.void
+            ).pipe(Effect.as(output));
+          },
+        ),
+      ),
+      collect(server.stderr),
+    ]),
   );
   const httpClient = yield* HttpClient.HttpClient;
   // Probes can hang during server initialization; bound each request as SSH readiness does.
@@ -178,16 +210,42 @@ const smokeCliArchive = Effect.fn("smokeCliArchive")(function* (input: {
     Effect.timeout(Duration.seconds(2)),
     Effect.orElseSucceed(() => false),
   );
-  const pollUntilReady = Effect.gen(function* () {
-    while (!(yield* probe)) {
-      yield* Effect.sleep(Duration.millis(250));
-    }
-    return true;
-  });
-  const ready = yield* pollUntilReady.pipe(
+  const ready = yield* Deferred.await(readySignal).pipe(
+    Effect.andThen(probe),
     Effect.timeout(Duration.seconds(30)),
     Effect.orElseSucceed(() => false),
   );
+  if (ready && input.postgres) {
+    const workspace = path.join(scratch, "workspace");
+    yield* fs.makeDirectory(workspace);
+    const project = yield* runExecutable(
+      executable,
+      ["project", "add", workspace, "--base-dir", home, "--title", "Binary storage verification"],
+      contentDir,
+      environment,
+    );
+    if (project.exitCode !== 0 || !project.stdout.includes("Added project"))
+      return yield* new CliArchiveSmokeError({
+        step: "creating a PostgreSQL project from the executable",
+        detail: `CLI exit ${project.exitCode}`,
+      });
+    const doctor = yield* runExecutable(
+      executable,
+      ["doctor", "--base-dir", home, "--dry-run"],
+      contentDir,
+      environment,
+    );
+    if (doctor.exitCode !== 0 || !doctor.stdout.includes("PostgreSQL:"))
+      return yield* new CliArchiveSmokeError({
+        step: "inspecting PostgreSQL from the executable",
+        detail: `CLI exit ${doctor.exitCode}`,
+      });
+    if (yield* fs.exists(path.join(home, "userdata/statev2.sqlite")))
+      return yield* new CliArchiveSmokeError({
+        step: "checking PostgreSQL storage authority",
+        detail: "unexpected SQLite business database",
+      });
+  }
   yield* server.kill({ killSignal: "SIGTERM" }).pipe(Effect.ignore);
   yield* server.exitCode.pipe(Effect.timeout(Duration.seconds(10)), Effect.ignore);
   const [stdout, stderr] = yield* Fiber.join(output).pipe(
@@ -197,11 +255,11 @@ const smokeCliArchive = Effect.fn("smokeCliArchive")(function* (input: {
   if (!ready) {
     return yield* new CliArchiveSmokeError({
       step: "serving from the extracted archive",
-      detail: `no 200 from / within 30s\n${stdout}${stderr}`,
+      detail: `server did not become command-ready and answer HTTP within 30s\n${[stdout, stderr].join("\n").replaceAll(/(?:https?|wss?|postgres(?:ql)?|rediss?):\/\/[^\s"']+/g, "<redacted-url>")}`,
     });
   }
   yield* Effect.log(
-    `[cli-smoke] ${root}: --version and __service-launcher passed, and serve answered on ${String(port)}.`,
+    `[cli-smoke] ${root}: --version, __service-launcher and command-ready HTTP passed with ${input.postgres ? "PostgreSQL/Redis; project add and doctor also passed" : "SQLite"}.`,
   );
 });
 
@@ -210,6 +268,7 @@ const command = Command.make(
   {
     archive: Flag.String("archive"),
     expectVersion: Flag.String("expect-version"),
+    postgres: Flag.Boolean("postgres").pipe(Flag.withDefault(false)),
   },
   (input) => smokeCliArchive(input).pipe(Effect.scoped),
 ).pipe(Command.withDescription("Extract a CLI archive and run its executable."));

@@ -1,0 +1,107 @@
+name: Stardust Linux server binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/linux-postgres-redis]
+    paths:
+      - .github/workflows/server-binaries.yml
+      - scripts/smoke-cli-archive.ts
+      - infra/server-storage/**
+      - apps/server/**
+      - apps/web/**
+      - packages/**
+      - scripts/build-cli-archive.ts
+      - third-party-licenses.config.json
+      - pnpm-lock.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  binary:
+    name: Linux server ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17.7-bookworm
+        env:
+          POSTGRES_USER: stardust_test
+          POSTGRES_PASSWORD: fixture-only
+          POSTGRES_DB: stardust_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U stardust_test -d stardust_test" --health-interval 5s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis:8.2-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      STARDUST_TEST_POSTGRES_URL: postgresql://stardust_test:fixture-only@127.0.0.1:5432/stardust_test
+      STARDUST_TEST_REDIS_URL: redis://127.0.0.1:6379/0
+      VITE_RELEASE_CHANNEL: stable
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb
+        with:
+          node-version-file: package.json
+          run-install: false
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install native build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libsecret-1-dev pkg-config patchelf
+      - name: Install workspace dependencies
+        run: vp install --frozen-lockfile --filter=t3... --filter=@t3tools/web... --filter=@t3tools/scripts...
+      - name: Resolve build version
+        run: |
+          version="$(node -p "require('./apps/server/package.json').version")-stardust.${GITHUB_SHA:0:12}"
+          echo "APP_VERSION=$version" >> "$GITHUB_ENV"
+      - name: Build web client and server
+        run: vp run --filter t3 build
+      - name: Build resource monitor
+        run: |
+          cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml
+          mkdir -p "apps/server/dist/resource-monitor/linux-${{ matrix.arch }}"
+          cp native/resource-monitor/target/release/t3-resource-monitor "apps/server/dist/resource-monitor/linux-${{ matrix.arch }}/"
+      - name: Build native server executable
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+      - name: Assemble deployment archive
+        run: |
+          node scripts/build-cli-archive.ts --platform linux --arch "${{ matrix.arch }}" --version "$APP_VERSION" --output-dir release-server
+          mkdir -p "$RUNNER_TEMP/stardust-package"
+          tar -xf "release-server/t3-${APP_VERSION}-linux-${{ matrix.arch }}.tar.gz" -C "$RUNNER_TEMP/stardust-package"
+          root="$RUNNER_TEMP/stardust-package/t3-${APP_VERSION}-linux-${{ matrix.arch }}"
+          mkdir -p "$root/deploy"
+          cp infra/server-storage/compose.yaml infra/server-storage/init-postgres.sh infra/server-storage/.env.example infra/server-storage/service.env.example infra/server-storage/stardust-server.service "$root/deploy/"
+          cp docs/operations/linux-postgres-redis.md "$root/DEPLOY.zh-CN.md"
+          git rev-parse HEAD > "$root/SOURCE_COMMIT"
+          mv "$root" "$RUNNER_TEMP/stardust-package/stardust-server-linux-${{ matrix.arch }}"
+          rm "release-server/t3-${APP_VERSION}-linux-${{ matrix.arch }}.tar.gz"
+          archive="stardust-server-${APP_VERSION}-linux-${{ matrix.arch }}.tar.gz"
+          tar --hard-dereference -czf "release-server/$archive" -C "$RUNNER_TEMP/stardust-package" "stardust-server-linux-${{ matrix.arch }}"
+          (cd release-server && sha256sum "$archive" > "$archive.sha256")
+      - name: Verify archive without host Node using SQLite
+        run: node scripts/smoke-cli-archive.ts --archive release-server/*.tar.gz --expect-version "$APP_VERSION"
+      - name: Verify archive without host Node using PostgreSQL and Redis
+        run: node scripts/smoke-cli-archive.ts --archive release-server/*.tar.gz --expect-version "$APP_VERSION" --postgres
+      - name: Upload verified server package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: Stardust-server-linux-${{ matrix.arch }}
+          path: release-server/*
+          if-no-files-found: error
+          retention-days: 30

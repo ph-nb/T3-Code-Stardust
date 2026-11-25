@@ -113,7 +113,7 @@ export const make = Effect.gen(function* () {
     execute: ({ keepProofKeyThumbprint }) =>
       sql`
         DELETE FROM auth_connect_devices
-        WHERE proof_key_thumbprint IS NOT ${keepProofKeyThumbprint}
+        WHERE proof_key_thumbprint IS DISTINCT FROM ${keepProofKeyThumbprint}
         RETURNING proof_key_thumbprint AS "proofKeyThumbprint"
       `,
   });

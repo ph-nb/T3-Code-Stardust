@@ -48,7 +48,7 @@ import * as SessionStore from "./SessionStore.ts";
 import { REUSABLE_DEV_SESSION_EXPIRES_AT, resolveReusableDevAuth } from "./ReusableDevAuth.ts";
 import { verifyRequestDpopProof } from "./dpop.ts";
 import { DESKTOP_RENDERER_ORIGINS } from "../httpCors.ts";
-import * as SqlitePersistence from "../persistence/Sqlite.ts";
+import * as Database from "../persistence/Database.ts";
 import * as ManagedLimits from "../policy/managedLimits.ts";
 import * as ManagedPolicy from "../policy/ManagedPolicy.ts";
 import {
@@ -719,7 +719,22 @@ const toSessionVerificationError = (cause: SessionStore.SessionCredentialError) 
 const mapSessionVerificationErrors = <A, R>(
   effect: Effect.Effect<A, SessionStore.SessionCredentialError, R>,
 ): Effect.Effect<A, ServerAuthInvalidCredentialError | ServerAuthInternalError, R> =>
-  effect.pipe(Effect.mapError(toSessionVerificationError));
+  effect.pipe(
+    Effect.mapError(toSessionVerificationError),
+    Effect.filterOrFail(
+      (session) =>
+        !(
+          typeof session === "object" &&
+          session !== null &&
+          "subject" in session &&
+          session.subject === CLOUD_CONNECT_SUBJECT
+        ),
+      () =>
+        new ServerAuthInvalidCredentialError({
+          diagnostic: "T3 Connect accounts have been removed.",
+        }),
+    ),
+  );
 
 export function parseBearerToken(request: HttpServerRequest.HttpServerRequest): string | null {
   const header = request.headers["authorization"];
@@ -970,9 +985,16 @@ export const make = Effect.gen(function* () {
             Effect.catchIf(SessionStore.isSessionCredentialInvalidError, () => Effect.void),
             Effect.mapError((cause) => new ServerAuthSessionCredentialValidationError({ cause })),
           );
-    const grant = yield* bootstrapCredentials
-      .consume(credential)
-      .pipe(Effect.mapError(toBootstrapExchangeError));
+    const grant = yield* bootstrapCredentials.consume(credential).pipe(
+      Effect.mapError(toBootstrapExchangeError),
+      Effect.filterOrFail(
+        (grant) => grant.subject !== CLOUD_CONNECT_SUBJECT,
+        () =>
+          new ServerAuthInvalidCredentialError({
+            diagnostic: "T3 Connect accounts have been removed.",
+          }),
+      ),
+    );
     const session = yield* sessions
       .issue({
         method: "browser-session-cookie",
@@ -1107,14 +1129,12 @@ export const make = Effect.gen(function* () {
         requestMetadata,
         ...(requestedScopes !== undefined ? { requestedScopes } : {}),
       }).pipe(
-        // Every T3 Connect key that gets in is remembered, so turning approval on later
-        // keeps the devices already in use and lists them for review.
-        Effect.tap((grant) =>
-          grant.subject === CLOUD_CONNECT_SUBJECT && input?.proofKeyThumbprint
-            ? bootstrapCredentials
-                .trustConnectDevice(input.proofKeyThumbprint, requestMetadata)
-                .pipe(Effect.mapError((cause) => new ServerAuthConnectDevicesError({ cause })))
-            : Effect.void,
+        Effect.filterOrFail(
+          (grant) => grant.subject !== CLOUD_CONNECT_SUBJECT,
+          () =>
+            new ServerAuthInvalidCredentialError({
+              diagnostic: "T3 Connect accounts have been removed.",
+            }),
         ),
         Effect.flatMap((grant) =>
           Effect.gen(function* () {
@@ -1245,41 +1265,11 @@ export const make = Effect.gen(function* () {
 
   const issueConnectCredential: EnvironmentAuth["Service"]["issueConnectCredential"] = Effect.fn(
     "EnvironmentAuth.issueConnectCredential",
-  )(function* ({ proofKeyThumbprint, requireApproval }) {
-    return yield* issueConnectCredentialLocked({ proofKeyThumbprint, requireApproval }).pipe(
-      connectTrustLock.withPermits(1),
-    );
-  });
-  // Untraced: the issueConnectCredential span above already covers it.
-  const issueConnectCredentialLocked = Effect.fnUntraced(function* ({
-    proofKeyThumbprint,
-    requireApproval,
-  }: Parameters<EnvironmentAuth["Service"]["issueConnectCredential"]>[0]) {
-    const mustWait =
-      requireApproval &&
-      !(yield* bootstrapCredentials
-        .isConnectDeviceTrusted(proofKeyThumbprint)
-        .pipe(Effect.mapError((cause) => new ServerAuthConnectDevicesError({ cause }))));
-    if (mustWait) {
-      const pending = yield* bootstrapCredentials
-        .findPendingConnect(proofKeyThumbprint)
-        .pipe(Effect.mapError((cause) => new ServerAuthConnectDevicesError({ cause })));
-      if (Option.isSome(pending)) {
-        return { credential: pending.value.credential, expiresAt: pending.value.expiresAt };
-      }
-    }
-    const issued = yield* createPairingLink({
-      scopes: AuthStandardClientScopes,
-      subject: CLOUD_CONNECT_SUBJECT,
-      // Long enough for someone to notice the request and approve it.
-      ttl: mustWait ? Duration.minutes(10) : Duration.minutes(2),
-      label: "T3 Connect",
-      proofKeyThumbprint,
-      ...(mustWait ? { requiresConnectApproval: true } : {}),
+  )(function* () {
+    return yield* new ServerAuthConnectDevicesError({
+      cause: new Error("T3 Connect accounts have been removed."),
     });
-    return { credential: issued.credential, expiresAt: issued.expiresAt };
   });
-
   const approveConnectDevice: EnvironmentAuth["Service"]["approveConnectDevice"] = (
     pairingLinkId,
   ) =>
@@ -1790,7 +1780,7 @@ export const layer = Layer.effect(EnvironmentAuth, make).pipe(
   Layer.provideMerge(EnvironmentAuthPolicy.layer),
 );
 
-const layerStorage = Layer.mergeAll(ServerSecretStore.layer, SqlitePersistence.layerCliConfig);
+const layerStorage = Layer.mergeAll(ServerSecretStore.layer, Database.layerCliConfig);
 
 export const layerRuntime = layer.pipe(
   Layer.provideMerge(ManagedPolicy.layer),

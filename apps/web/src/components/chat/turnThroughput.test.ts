@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import * as DateTime from "effect/DateTime";
 import type { OrchestrationV2ThreadProjection } from "@t3tools/contracts";
-import { selectTurnThroughput, throughputReading } from "./turnThroughput";
+import { selectTurnThroughput, throughputReading } from "@t3tools/client-runtime/turnThroughput";
 const at = (seconds: number) => DateTime.makeUnsafe(seconds * 1000);
 function fixture() {
   return {

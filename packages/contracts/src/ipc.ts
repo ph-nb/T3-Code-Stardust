@@ -1134,6 +1134,7 @@ export interface DesktopBridge {
   getRelayTelemetryEnabled: () => boolean | null;
   getPathForFile: (file: File) => string;
   getClientPlatform: () => string;
+  getClientArchitecture?: () => string;
   restartAudioService?: () => Promise<boolean>;
   setNotificationBadge: (badge: { count: number; image: string | null }) => Promise<void>;
   onNotificationBadgeClear: (listener: () => void) => () => void;

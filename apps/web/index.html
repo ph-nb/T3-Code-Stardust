@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -123,6 +123,20 @@
             },
           },
         };
+        BUILT_IN_THEME_PALETTES.apple = {
+          light: {
+            background: "#F7F7F9",
+            foreground: "#1D1D1F",
+            accent: "#E34717",
+            chrome: "#F7F7F9",
+          },
+          dark: {
+            background: "#1C1C1E",
+            foreground: "#F5F5F7",
+            accent: "#FF6734",
+            chrome: "#1C1C1E",
+          },
+        };
         const BUILT_IN_THEME_MODES = Object.fromEntries(
           Object.entries(BUILT_IN_THEME_PALETTES).map(([id, palettes]) => [
             id,
@@ -219,7 +233,8 @@
         };
 
         try {
-          const storedTheme = window.localStorage.getItem("t3code:theme");
+          const savedTheme = window.localStorage.getItem("t3code:theme");
+          const storedTheme = savedTheme ?? "apple";
           const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           const LEGACY_THEME_IDS = {
             "t3-chat-dark": "t3-chat",
@@ -258,7 +273,7 @@
             theme === "light" || theme === "dark" ? theme : (legacyMode ?? baseAppearance);
           const appearanceMode = isThemePreferenceMode(storedAppearanceMode)
             ? storedAppearanceMode
-            : storedFollowSystem === "true"
+            : storedFollowSystem === "true" || (storedFollowSystem === null && savedTheme === null)
               ? "system"
               : storedFollowSystem === "false"
                 ? preferenceMode

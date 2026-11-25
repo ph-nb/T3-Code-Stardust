@@ -1,0 +1,14 @@
+diff --git a/dist/lib/utils/digest.js b/dist/lib/utils/digest.js
+index 8603f207e61c255dcabf6be66ae3cb78667c1581..718e3a94a614eca6646743d6dd028c1617f60081 100644
+--- a/dist/lib/utils/digest.js
++++ b/dist/lib/utils/digest.js
+@@ -5,7 +5,8 @@ let xxh3Cache = null;
+ async function getXxh3() {
+     if (!xxh3Cache) {
+         try {
+-            const module = await import('@node-rs/xxhash');
++            // SEA cannot resolve file-backed ESM imports; this optional addon must stay on disk.
++            const module = require('node:module').createRequire(__filename)('@node-rs/xxhash');
+             xxh3Cache = module.xxh3;
+         }
+         catch {

@@ -27,6 +27,8 @@
 
 ---
 
+This fork includes Windows, Linux, and Android UI adaptations and build commands. Desktop clients share the Stardust UI; Android uses native layouts for the theme, Starship reasoning slider, composer, and quota rings. See the [cross-platform build and validation notes](docs/user/stardust-cross-platform.zh-CN.md) for scope, prerequisites, and verification status. The existing downloads below are the original author's macOS releases.
+
 <a id="highlights"></a>
 
 ## Highlights & Live Motion Previews
@@ -82,13 +84,13 @@ Try every engine live in the **[Stardust Interactive Workshop](https://www.xiaox
   <img src="assets/community/v1.2.0/demo-slider-gallery.gif" alt="Stardust Kit slider engines running side-by-side" width="94%" />
 </p>
 
-| Kit Module | Visual Style | Directory | Live Demo |
-| --- | --- | --- | --- |
-| **V18 Fluid Starship** | Default in v1.2 · 5-stage launch + sprite atlas + 2s auto-sleep | [`stardust-kit/v18-starship-fluid`](stardust-kit/v18-starship-fluid/) | [demo.html](stardust-kit/v18-starship-fluid/demo.html) |
-| **V16 Stardust Observatory** | Cozy pixel narrative · Midnight robot waking observatory props | [`stardust-kit/v16-stardust-observatory`](stardust-kit/v16-stardust-observatory/) | [demo.html](stardust-kit/v16-stardust-observatory/demo.html) |
-| **V19-A 16-Bit Pixel Starship** | Retro hi-bit arcade pixel rocket & fireball plumes | [`stardust-kit/v19-pixel-starship`](stardust-kit/v19-pixel-starship/) | [demo.html](stardust-kit/v19-pixel-starship/demo.html) |
-| **V19-B Cyber Mecha HUD** | Telemetry grid, luminous ribbon contrails & warp shield | [`stardust-kit/v19-cyber-hud`](stardust-kit/v19-cyber-hud/) | [demo.html](stardust-kit/v19-cyber-hud/demo.html) |
-| **V17 Experiments (4 Themes)** | Starship / Fusion Reactor / Solar Eclipse / Starsteel Forge | [`stardust-kit/v17-thrill-experiments`](stardust-kit/v17-thrill-experiments/) | [demo.html](stardust-kit/v17-thrill-experiments/demo.html) |
+| Kit Module                      | Visual Style                                                    | Directory                                                                         | Live Demo                                                    |
+| ------------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **V18 Fluid Starship**          | Default in v1.2 · 5-stage launch + sprite atlas + 2s auto-sleep | [`stardust-kit/v18-starship-fluid`](stardust-kit/v18-starship-fluid/)             | [demo.html](stardust-kit/v18-starship-fluid/demo.html)       |
+| **V16 Stardust Observatory**    | Cozy pixel narrative · Midnight robot waking observatory props  | [`stardust-kit/v16-stardust-observatory`](stardust-kit/v16-stardust-observatory/) | [demo.html](stardust-kit/v16-stardust-observatory/demo.html) |
+| **V19-A 16-Bit Pixel Starship** | Retro hi-bit arcade pixel rocket & fireball plumes              | [`stardust-kit/v19-pixel-starship`](stardust-kit/v19-pixel-starship/)             | [demo.html](stardust-kit/v19-pixel-starship/demo.html)       |
+| **V19-B Cyber Mecha HUD**       | Telemetry grid, luminous ribbon contrails & warp shield         | [`stardust-kit/v19-cyber-hud`](stardust-kit/v19-cyber-hud/)                       | [demo.html](stardust-kit/v19-cyber-hud/demo.html)            |
+| **V17 Experiments (4 Themes)**  | Starship / Fusion Reactor / Solar Eclipse / Starsteel Forge     | [`stardust-kit/v17-thrill-experiments`](stardust-kit/v17-thrill-experiments/)     | [demo.html](stardust-kit/v17-thrill-experiments/demo.html)   |
 
 ---
 
@@ -97,6 +99,7 @@ Try every engine live in the **[Stardust Interactive Workshop](https://www.xiaox
 ## Update Alerts & Privacy
 
 ### In-App New Version Alerts
+
 - On launch and every 6 hours, the app queries GitHub's public API for this repo's latest stable release (only releases with a complete macOS Apple Silicon build and SHA256 digest count).
 - When a newer version exists, you get a notice that links to the release page. **The app never downloads, replaces, or restarts itself** — upgrade manually using the steps under Download & Install.
 - Under **Settings → About** you can:
@@ -105,6 +108,7 @@ Try every engine live in the **[Stardust Interactive Workshop](https://www.xiaox
 - Update checks never send conversations, accounts, or project data.
 
 ### Usage Counting & Privacy
+
 - **Stardust active-user count (v1.2.1+, on by default)**: so the author knows how many people use it, the app sends at most once a day a random install ID, the Stardust version, and the OS and CPU type to `xiaoxin666.cn/api/stardust`. No conversations, accounts, projects or file paths. The site endpoint never reads or forwards your IP; the server stores only a re-hash of the install ID, deduplicated per day and deleted after 90 days.
 - The first launch of the new version shows a notice with a **Turn off** button; you can switch it any time under **Settings → About → "Count me as an active Stardust user"**. Off means nothing is sent.
 - [xiaoxin666.cn/stardust](https://www.xiaoxin666.cn/stardust) publishes a single number: devices active in the last 7 days.

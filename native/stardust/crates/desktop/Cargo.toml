@@ -1,0 +1,23 @@
+[package]
+name = "stardust-desktop"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+url.workspace = true
+serde.workspace = true
+stardust-runtime = { path = "../runtime", features = ["desktop"] }
+tokio-util.workspace = true
+serde_json.workspace = true
+tauri-plugin-single-instance = "2"
+open = "5"

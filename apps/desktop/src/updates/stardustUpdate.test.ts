@@ -93,7 +93,7 @@ describe("parseStardustRelease", () => {
     expect(release.tag).toBe("v1.2.2");
     expect(release.asset).toEqual({
       name: "T3-Stardust-v1.2.2-macOS-arm64.zip",
-      url: "https://github.com/zds-xiaoxin/xiaoxin-t3code/releases/download/v1.2.2/T3-Stardust-v1.2.2-macOS-arm64.zip",
+      url: "https://github.com/ph-nb/T3-Code-Stardust/releases/download/v1.2.2/T3-Stardust-v1.2.2-macOS-arm64.zip",
       size: 236887017,
       sha256: DIGEST,
     });

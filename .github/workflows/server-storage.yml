@@ -1,0 +1,55 @@
+name: Linux PostgreSQL and Redis storage
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/linux-postgres-redis]
+
+permissions:
+  contents: read
+
+jobs:
+  storage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17.7-bookworm
+        env:
+          POSTGRES_USER: stardust_test
+          POSTGRES_PASSWORD: fixture-only
+          POSTGRES_DB: stardust_test
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U stardust_test -d stardust_test" --health-interval 5s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis:8.2-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      STARDUST_TEST_POSTGRES_URL: postgresql://stardust_test:fixture-only@127.0.0.1:5432/stardust_test
+      STARDUST_TEST_REDIS_URL: redis://127.0.0.1:6379/0
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+      - uses: voidzero-dev/setup-vp@250f29ce396baf5e8f24498e17c0dfdebabc26eb
+        with:
+          node-version-file: package.json
+          run-install: false
+      - name: Install server dependencies
+        run: vp install --frozen-lockfile --filter=t3... --filter=@t3tools/scripts...
+      - name: PostgreSQL and Redis integration
+        working-directory: apps/server
+        run: vp run test:storage
+      - name: Server typecheck
+        working-directory: apps/server
+        run: vp run typecheck
+      - name: Build server bundle
+        working-directory: apps/server
+        run: vp pack
+      - name: SQLite and cache regression
+        working-directory: apps/server
+        run: vp test run src/persistence/StorageConfig.test.ts src/persistence/PostgresTypes.test.ts src/persistence/DatabaseStorage.test.ts src/persistence/OrchestrationEventStore.test.ts src/persistence/OrchestrationEventStore.sequence.test.ts src/orchestration-v2/EventSink.test.ts src/orchestration-v2/ProjectionStore.test.ts src/orchestration-v2/ProjectionMaintenance.test.ts src/orchestration-v2/ThreadSearch.test.ts src/orchestration-v2/legacy/LegacyV1ThreadImporter.test.ts src/pullRequest/PullRequestReadCache.test.ts

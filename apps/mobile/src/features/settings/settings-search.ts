@@ -7,13 +7,6 @@ import type { SettingsPageTarget } from "./components/settings-page-targets";
 
 /** What each page holds besides its row's label, so search finds a setting by its own name. */
 const SETTINGS_SEARCH_TERMS = {
-  account: [
-    msg("sign in", { $context: "settings search keyword" }),
-    msg("sign out", { $context: "settings search keyword" }),
-    msg("login", { $context: "settings search keyword" }),
-    "clerk",
-    msg("connect", { $context: "settings search keyword" }),
-  ],
   SettingsEnvironments: [
     msg("servers", { $context: "settings search keyword" }),
     msg("connections", { $context: "settings search keyword" }),

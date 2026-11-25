@@ -1,0 +1,41 @@
+[workspace]
+members = ["crates/runtime", "crates/server", "crates/desktop"]
+default-members = ["crates/runtime", "crates/server"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0-preview.5"
+edition = "2024"
+rust-version = "1.88"
+license = "MIT"
+
+[workspace.dependencies]
+anyhow = "1.0"
+axum = { version = "0.8", features = ["ws"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+futures-util = "0.3"
+redis = { version = "0.32", features = ["tokio-rustls-comp", "connection-manager"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sqlx = { version = "0.8", default-features = false, features = [
+  "runtime-tokio",
+  "tls-rustls-ring",
+  "postgres",
+  "json",
+  "derive",
+] }
+subtle = "2.6"
+thiserror = "2.0"
+tokio = { version = "1.48", features = ["full"] }
+tokio-util = "0.7"
+tower-http = { version = "0.6", features = ["fs", "limit", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = "2.5"
+uuid = { version = "1.18", features = ["v4", "serde"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
+

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import {
   BUILT_IN_THEME_IDS,
   BUILT_IN_THEMES,
+  APPLE_THEME,
   T3_CHAT_THEME,
   T3_CODE_LIGHT_THEME_COLORS,
   T3_CODE_DARK_THEME_COLORS,
@@ -20,6 +21,7 @@ import {
   DEFAULT_MOBILE_THEME_ID,
   flattenThemeColor,
   getMobileThemeVariables,
+  getMobileThemeColors,
   resolveMobileThemeIds,
   themeColorWithAlpha,
   themeColorToNativeColor,
@@ -69,12 +71,18 @@ describe("mobile themes", () => {
 
   it.each(MOBILE_THEME_IDS)("uses the web color roles for %s in both appearances", (themeId) => {
     for (const appearance of ["light", "dark"] as const) {
-      const theme = BUILT_IN_THEMES.find((candidate) => candidate.id === themeId);
-      const colors = theme
-        ? getThemeColorsForAppearance(theme, appearance)!
-        : appearance === "dark"
-          ? T3_CODE_DARK_THEME_COLORS
-          : T3_CODE_LIGHT_THEME_COLORS;
+      const theme =
+        themeId === "apple"
+          ? APPLE_THEME
+          : BUILT_IN_THEMES.find((candidate) => candidate.id === themeId);
+      const colors =
+        themeId === "apple"
+          ? getMobileThemeColors(themeId, appearance)
+          : theme
+            ? getThemeColorsForAppearance(theme, appearance)!
+            : appearance === "dark"
+              ? T3_CODE_DARK_THEME_COLORS
+              : T3_CODE_LIGHT_THEME_COLORS;
       const variables =
         themeId === DEFAULT_MOBILE_THEME_ID
           ? readDefaultMobileThemeVariables(appearance)
@@ -225,6 +233,7 @@ describe("mobile themes", () => {
   });
 
   it("migrates one theme choice to both appearances and preserves independent choices", () => {
+    expect(resolveMobileThemeIds({})).toEqual({ light: "apple", dark: "apple" });
     expect(resolveMobileThemeIds({ themeId: "grove" })).toEqual({
       light: "grove",
       dark: "grove",

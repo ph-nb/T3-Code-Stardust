@@ -41,7 +41,7 @@ type DesktopThemeBridge = Pick<DesktopBridge, "setTheme">;
 const STORAGE_KEY = "t3code:theme";
 const MEDIA_QUERY = "(prefers-color-scheme: dark)";
 const DEFAULT_THEME_SNAPSHOT: ThemeSnapshot = {
-  theme: "system",
+  theme: "apple",
   resolvedTheme: "light",
   systemDark: false,
   followSystem: true,
@@ -150,6 +150,7 @@ function readStoredFollowSystem(theme: Theme): boolean {
     const raw = window.localStorage.getItem(THEME_FOLLOW_SYSTEM_STORAGE_KEY);
     if (raw === "true") return true;
     if (raw === "false") return false;
+    if (window.localStorage.getItem(STORAGE_KEY) === null) return true;
   } catch {}
 
   return theme === "system";
@@ -199,7 +200,7 @@ export function readThemePreference(): Theme {
   if (raw !== null && isKnownThemePreference(raw)) {
     return canonicalThemePreference(raw);
   }
-  return DEFAULT_THEME_SNAPSHOT.theme;
+  return raw === null ? DEFAULT_THEME_SNAPSHOT.theme : "system";
 }
 
 function writeThemePreference(theme: Theme): void {

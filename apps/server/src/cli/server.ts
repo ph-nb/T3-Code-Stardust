@@ -10,6 +10,7 @@ import { awaitServiceLauncherStop } from "../cloud/serviceLauncherClient.ts";
 import * as ServerConfig from "../config.ts";
 import { awaitLauncherLoss } from "../launcherWatch.ts";
 import * as DatabaseMaintenance from "../persistence/DatabaseMaintenance.ts";
+import * as StorageConfig from "../persistence/StorageConfig.ts";
 import * as ProcessRunner from "../processRunner.ts";
 import * as AutomaticPort from "./automaticPort.ts";
 import { type CliServerFlags, resolveServerConfig, sharedServerCommandFlags } from "./config.ts";
@@ -29,15 +30,18 @@ const runServerCommand = Effect.fn("server.runServerCommand")(function* (
   const logLevel = yield* GlobalFlag.LogLevel;
   const selectAutomaticPort = yield* AutomaticPort.make.pipe(Effect.provide(ProcessRunner.layer));
   const config = yield* resolveServerConfig(flags, logLevel, { ...options, selectAutomaticPort });
+  const storage = yield* StorageConfig.make();
   const run = Effect.raceFirst(
     runServer.pipe(Effect.provideService(ServerConfig.ServerConfig, config)),
     awaitServiceLauncherStop().pipe(Effect.andThen(Effect.interrupt)),
   ).pipe(
     // Settings' Reclaim stops the server; repair once the database is closed, before the restart.
     Effect.ensuring(
-      DatabaseMaintenance.runRequestedReclaim(config.dbPath).pipe(
-        Effect.provide(DatabaseMaintenance.layer),
-      ),
+      storage.backend === "sqlite"
+        ? DatabaseMaintenance.runRequestedReclaim(config.dbPath).pipe(
+            Effect.provide(DatabaseMaintenance.layer),
+          )
+        : Effect.void,
     ),
   );
   if (config.mode !== "desktop" || config.desktopBootstrapToken === undefined) return yield* run;

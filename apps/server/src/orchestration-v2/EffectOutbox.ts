@@ -29,6 +29,7 @@ import * as Result from "effect/Result";
 import * as Schedule from "effect/Schedule";
 import * as Schema from "effect/Schema";
 import * as SqlClient from "effect/sql/SqlClient";
+import { isPostgres } from "../persistence/SqlDialect.ts";
 
 import { forkParked } from "../serverActivation.ts";
 
@@ -604,11 +605,15 @@ export const layer: Layer.Layer<EffectOutboxV2, never, SqlClient.SqlClient> = La
                 AND ${excludeRestartContinuations ? sql`candidate.effect_type != 'provider-runtime.continue'` : sql`1 = 1`}
               ORDER BY candidate.available_at ASC, candidate.created_at ASC, candidate.effect_id ASC
               LIMIT 1
+              ${isPostgres(sql) ? sql`FOR UPDATE OF candidate SKIP LOCKED` : sql``}
             )
+            AND status = 'pending'
             RETURNING *
           `;
           while (true) {
-            const rows = yield* claimStatement.pipe(Effect.withTracerEnabled(false));
+            const rows = yield* (
+              isPostgres(sql) ? sql.withTransaction(claimStatement) : claimStatement
+            ).pipe(Effect.withTracerEnabled(false));
             const row = rows[0];
             if (row === undefined) return Option.none();
             const decoded = yield* Effect.result(rowToEffect(row));

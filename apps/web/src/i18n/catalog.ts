@@ -1,5 +1,8 @@
 // Adapted from ZhiweiXiao98/t3code b604575 (MIT). Application UI copy only.
 export const zhCN: Readonly<Record<string, string>> = {
+  "The latest release is unavailable for this platform": "最新发行暂不支持当前平台",
+  "No complete, verifiable build is available for this platform":
+    "该发行尚无适用于当前平台且可校验的完整安装包",
   "Quota not reported": "未上报额度",
   "Gemini quota not reported": "Gemini 未上报额度",
   "about {days} days earlier": "提前约 {days} 天",
@@ -9368,8 +9371,6 @@ export const zhCN: Readonly<Record<string, string>> = {
   "{count} more steps": "另外 {count} 步",
   "No result": "无结果",
   "Share anonymous usage data": "共享匿名使用数据",
-  "Off by default. When on, anonymous usage events (feature use, app version, operating system; no prompts, files or paths) are sent to ingest.t3.codes, a server run by the upstream T3 Code project. Turning it off stops sending at once and discards events not yet sent.":
-    "默认关闭。开启后，匿名使用事件（功能使用情况、应用版本、操作系统；不含提示词、文件或路径）会发送到 ingest.t3.codes，该服务由上游 T3 Code 项目运营。关闭后立即停止发送，并丢弃尚未发送的事件。",
   "What this build sends and where. Usage statistics stay off unless you turn them on above.":
     "本版本会发送什么、发往哪里。除非你在上方开启，否则不会发送使用统计。",
   "Usage statistics are off by default. You can turn them on in Settings › About.":
@@ -9728,9 +9729,9 @@ export const zhCN: Readonly<Record<string, string>> = {
     "（已删除的可重建缓存 {deleted} − 抢救与归档写入本盘 {written}）",
   "Still in Trash {size}": "废纸篓暂存 {size}",
   "freed when it is emptied on {date}": "{date}自动清空后释放",
-  "Before": "清理前",
+  Before: "清理前",
   "{percent}% used · {size} free": "已用 {percent}% · 剩余 {size}",
-  "After": "清理后",
+  After: "清理后",
   "{percent}% used · {size} free (Trash still holds {pending})":
     "已用 {percent}% · 剩余 {size}（废纸篓仍占 {pending}）",
   "In 7 days": "7 天后",
@@ -9754,29 +9755,31 @@ export const zhCN: Readonly<Record<string, string>> = {
     "存放在 {path}，占用本盘空间，已计入上面的实际释放。",
   "Open archive": "打开归档",
   "What this run did": "本次清理明细",
-  "Deleted": "已删除",
+  Deleted: "已删除",
   "In Trash": "在废纸篓",
-  "Disks": "磁盘",
-  "Internal": "内置",
-  "External": "外置",
+  Disks: "磁盘",
+  Internal: "内置",
+  External: "外置",
   "Disk information is not available yet.": "暂时取不到磁盘信息。",
   "About 30 seconds": "约 30 秒",
   "{size} total": "共 {size}",
   "{used} used": "已用 {used}",
   "{free} free": "剩余 {free}",
-  "Free": "可用空间",
+  Free: "可用空间",
   "Press Scan to start. Scanning only reads; it never changes a file. You choose what to clean afterwards. Before worktrees and build backups are cleaned, screenshots, previews and uncommitted changes are rescued first.":
     "点中间的按钮开始。扫描只读，不会改动任何文件；结果出来后由你勾选。清理 worktree 与构建备份前，会先抢救截图、预览和未提交的改动。",
   "That folder cannot be used. Choose an existing folder on this computer, other than your home folder or the disk root.":
     "这个文件夹不能用。请选择本机上已存在的文件夹，不能是主目录或磁盘根目录。",
-  "Another cleanup step is still running. Try again in a moment.": "另一项清理仍在进行，请稍后再试。",
+  "Another cleanup step is still running. Try again in a moment.":
+    "另一项清理仍在进行，请稍后再试。",
   "Scan first, then choose what to clean.": "请先扫描，再选择要清理的内容。",
   "This cleanup can no longer be undone.": "这次清理已无法撤销。",
   "Nothing could be put back. The items may have been emptied from Trash or the original folders changed.":
     "没有能放回的内容。可能已从废纸篓清空，或原来的文件夹已改变。",
   "The archive folder could not be found.": "找不到归档文件夹。",
   "Cleanup could not continue. Nothing was removed.": "清理未能继续，没有删除任何内容。",
-  "Storage information is unavailable. Nothing was changed.": "暂时无法读取存储信息，未改动任何内容。",
+  "Storage information is unavailable. Nothing was changed.":
+    "暂时无法读取存储信息，未改动任何内容。",
   "Reading storage information…": "正在读取存储信息…",
   "Command copied": "命令已复制",
   "Could not copy the command": "无法复制命令",
@@ -9788,7 +9791,8 @@ export const zhCN: Readonly<Record<string, string>> = {
   "Rollback copies and build backups": "改造与构建备份",
   "System cache lists come from the preview of the open-source tool Mole (tw93/Mole, GPL-3.0). T3 Stardust carries out the removal and supports undo. This feature is not affiliated with the Mole project.":
     "系统缓存清单来自开源工具 Mole（tw93/Mole，GPL-3.0）的预览结果，由 T3 Stardust 执行并支持撤销。本功能与 Mole 项目无隶属关系。",
-  "Deletion is decided by fixed rules, not by an AI model.": "删除由固定规则决定，不由 AI 模型决定。",
+  "Deletion is decided by fixed rules, not by an AI model.":
+    "删除由固定规则决定，不由 AI 模型决定。",
   "Safe to clean": "放心清",
   "Take a look": "看一眼",
   "Remind only": "只提醒不动",
@@ -9796,7 +9800,8 @@ export const zhCN: Readonly<Record<string, string>> = {
     "可自动重建的缓存。直接删除，空间立刻释放。",
   "Probably removable, but they may hold something you still want. They go to Trash and can be undone for 7 days, but Trash still occupies the disk until this app empties it after 7 days.":
     "大概率可以清，但可能有你还想留的东西。默认移到废纸篓（7 天内可撤销，但废纸篓里的文件仍占着磁盘，到期由本应用清空后才释放）。",
-  "Shown so you know about them. This page never deletes them.": "只是让你知道它们的存在，本页不会删除。",
+  "Shown so you know about them. This page never deletes them.":
+    "只是让你知道它们的存在，本页不会删除。",
   "{selected} of {total} selected": "已选 {selected}/{total}",
   "Select all in {tier}": "全选「{tier}」",
   "Uncommitted · rescued first": "含未提交 · 先抢救",
@@ -9866,15 +9871,19 @@ export const zhCN: Readonly<Record<string, string>> = {
   "{count} locations · listed by Mole's rules": "{count} 处 · 来自 Mole 规则",
   "Cache files that apps and tools rebuild by themselves when they need them.":
     "应用和工具用到时会自动重建的缓存文件。",
-  "Mole (tw93/Mole), run as a separate program in preview mode": "Mole（tw93/Mole），以独立程序的预览模式运行",
-  "Caches are rebuilt automatically, so removing them loses nothing.": "缓存会自动重建，删除不会丢任何东西。",
+  "Mole (tw93/Mole), run as a separate program in preview mode":
+    "Mole（tw93/Mole），以独立程序的预览模式运行",
+  "Caches are rebuilt automatically, so removing them loses nothing.":
+    "缓存会自动重建，删除不会丢任何东西。",
   "Nothing to restore. The apps recreate what they need; the next launch may be a little slower.":
     "无需恢复。应用会自己重新生成，下次启动可能稍慢一点。",
   "Developer download and build cache": "开发工具下载与构建缓存",
   "Downloaded packages and build products kept so installs and builds go faster.":
     "为加快安装和构建而保留的下载包与构建产物。",
-  "It is re-downloaded or rebuilt the next time you install or build.": "下次安装或构建时会重新下载或重建。",
-  "Nothing to restore. The next install or build refills it.": "无需恢复，下次安装或构建会自动补上。",
+  "It is re-downloaded or rebuilt the next time you install or build.":
+    "下次安装或构建时会重新下载或重建。",
+  "Nothing to restore. The next install or build refills it.":
+    "无需恢复，下次安装或构建会自动补上。",
   "Not merged": "未合并",
   "A checked-out copy of a repository that an agent worked in.": "智能体工作时检出的仓库副本。",
   "T3 Stardust worktree": "T3 Stardust 工作树",
@@ -9904,7 +9913,8 @@ export const zhCN: Readonly<Record<string, string>> = {
     "删除它们会丢失对话，所以本页绝不会动。需要压缩或归档，请到「维护」设置。",
   "Agent temporary folders in /tmp": "/tmp 里的智能体临时目录",
   "{count} folders untouched for a day or more": "{count} 个目录超过一天没动过",
-  "Scratch folders that agents and test browsers leave in /tmp.": "智能体和测试浏览器留在 /tmp 里的临时目录。",
+  "Scratch folders that agents and test browsers leave in /tmp.":
+    "智能体和测试浏览器留在 /tmp 里的临时目录。",
   "Codex, Claude Code, T3 and test browsers": "Codex、Claude Code、T3 和测试浏览器",
   "Nothing has written to them for 24 hours, and /tmp is scratch space by design.":
     "24 小时内没有任何写入，而且 /tmp 本来就是临时空间。",
@@ -9913,8 +9923,10 @@ export const zhCN: Readonly<Record<string, string>> = {
   "{name} old copies": "{name} 的旧备份",
   "{count} copies · newest {kept} kept": "{count} 个 · 每个来源保留最新 {kept} 份",
   "Rollback copies": "回滚备份",
-  "Whole-app backups made before an app was replaced or rolled back.": "应用被替换或回滚之前留下的整包备份。",
-  "Newer backups of the same app are kept; these are older than that.": "同一应用更新的备份已保留，这些比它们更旧。",
+  "Whole-app backups made before an app was replaced or rolled back.":
+    "应用被替换或回滚之前留下的整包备份。",
+  "Newer backups of the same app are kept; these are older than that.":
+    "同一应用更新的备份已保留，这些比它们更旧。",
   "Undo while they are in Trash, or reinstall the app from its update channel.":
     "在废纸篓期间可撤销，也可以从更新渠道重新安装应用。",
   ".bak-pre-* and .orig files": ".bak-pre-* / .orig 文件",
@@ -9922,14 +9934,17 @@ export const zhCN: Readonly<Record<string, string>> = {
   "Backup copies of single files that a patch or a merge left next to the original.":
     "补丁或合并留在原文件旁边的单文件备份。",
   "Patch and merge tools": "补丁与合并工具",
-  "The newest copies of each file are kept; these are older.": "每个文件最新的几份已保留，这些更旧。",
+  "The newest copies of each file are kept; these are older.":
+    "每个文件最新的几份已保留，这些更旧。",
   "Undo while they are in Trash.": "在废纸篓期间可撤销。",
   "Older builds in my build folder ({name})": "我的构建目录里的历史构建（{name}）",
   "{count} builds · newest {kept} kept": "{count} 个 · 保留最新 {kept} 个",
   "Folders from earlier build generations kept for rollbacks.": "为了回滚而保留的早期构建目录。",
   "Your build folder": "你的构建目录",
-  "Newer generations of the same build are kept; these are older.": "同一构建更新的几代已保留，这些更旧。",
-  "Undo while they are in Trash; after that, rebuild from source.": "在废纸篓期间可撤销，之后可从源码重新构建。",
+  "Newer generations of the same build are kept; these are older.":
+    "同一构建更新的几代已保留，这些更旧。",
+  "Undo while they are in Trash; after that, rebuild from source.":
+    "在废纸篓期间可撤销，之后可从源码重新构建。",
   "Caches inside repositories with uncommitted changes": "含未提交改动的仓库里的缓存",
   "{count} locations": "{count} 处",
   "Cache folders that sit inside a git repository whose files are not committed.":
@@ -9954,7 +9969,8 @@ export const zhCN: Readonly<Record<string, string>> = {
   "Not part of the last scan": "不在上次扫描结果里",
   "Used a moment ago, so it was skipped": "刚刚还在使用，已跳过",
   "Changed after the scan, so it was skipped": "扫描之后有改动，已跳过",
-  "Has uncommitted work and rescue is off, so it was kept": "含未提交改动，而「先抢救」已关闭，已保留",
+  "Has uncommitted work and rescue is off, so it was kept":
+    "含未提交改动，而「先抢救」已关闭，已保留",
   "Has uncommitted files, so it was kept": "含未提交文件，已保留",
   "This disk has no Trash folder, so the original was kept": "这块盘没有可用的废纸篓，已保留原件",
   "The archive could not be verified, so the originals were kept": "归档未能通过校验，已保留原文件",
@@ -9963,7 +9979,8 @@ export const zhCN: Readonly<Record<string, string>> = {
   "It could not be removed": "未能删除",
   "Disk free {size}. Open Storage and cleanup": "磁盘剩余 {size}。打开「存储与清理」",
   "Disk free {size}": "磁盘剩余 {size}",
-  "rescue first build folder keep newest rollback copies bak orig": "先抢救 构建目录 保留 回滚备份 bak orig",
+  "rescue first build folder keep newest rollback copies bak orig":
+    "先抢救 构建目录 保留 回滚备份 bak orig",
   "Used {percent}%": "已用 {percent}%",
   "{count} items selected": "已选 {count} 项",
   "Other used space": "其他已用",

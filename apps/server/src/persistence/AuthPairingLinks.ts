@@ -255,7 +255,7 @@ export const make = Effect.gen(function* () {
             requires_connect_approval = 0
             OR proof_key_thumbprint IN (SELECT proof_key_thumbprint FROM auth_connect_devices)
           )
-          AND (${requestedScopes === undefined ? 1 : 0} OR EXISTS (
+          AND (${requestedScopes === undefined ? 1 : 0} = 1 OR EXISTS (
             SELECT 1
             FROM json_each(${JSON.stringify(requestedScopes ?? [])}) AS requested
             WHERE requested.value IN (
@@ -501,8 +501,8 @@ export const make = Effect.gen(function* () {
           AND (
             (
               proof_key_thumbprint IS NOT NULL
-              AND (${proofKeyThumbprint} IS NULL OR proof_key_thumbprint = ${proofKeyThumbprint})
-              AND proof_key_thumbprint IS NOT ${keepProofKeyThumbprint}
+              AND (CAST(${proofKeyThumbprint} AS TEXT) IS NULL OR proof_key_thumbprint = ${proofKeyThumbprint})
+              AND proof_key_thumbprint IS DISTINCT FROM ${keepProofKeyThumbprint}
             )
             OR (proof_key_thumbprint IS NULL AND ${includeUnbound ? 1 : 0} = 1)
           )

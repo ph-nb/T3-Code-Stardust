@@ -1288,15 +1288,15 @@ export const layer = Layer.effect(
               runError === undefined
                 ? sql``
                 : sql`, last_run_status = CASE
-                    WHEN last_run_status IS ${task.lastRunStatus} AND last_run_error IS ${task.lastRunError}
+                    WHEN last_run_status IS NOT DISTINCT FROM ${task.lastRunStatus} AND last_run_error IS NOT DISTINCT FROM ${task.lastRunError}
                     THEN 'failed' ELSE last_run_status END,
                   last_run_error = CASE
-                    WHEN last_run_status IS ${task.lastRunStatus} AND last_run_error IS ${task.lastRunError}
+                    WHEN last_run_status IS NOT DISTINCT FROM ${task.lastRunStatus} AND last_run_error IS NOT DISTINCT FROM ${task.lastRunError}
                     THEN ${runError} ELSE last_run_error END`
             }
         WHERE task_id = ${task.id}
-          AND next_run_at IS ${task.nextRunAt}
-          AND last_run_at IS ${task.lastRunAt}
+          AND next_run_at IS NOT DISTINCT FROM ${task.nextRunAt}
+          AND last_run_at IS NOT DISTINCT FROM ${task.lastRunAt}
         RETURNING task_id
       `.pipe(
         Effect.mapError((cause) =>
@@ -1377,10 +1377,10 @@ export const layer = Layer.effect(
                     updated_at = ${iso(now)},
                     run_count = run_count + CASE WHEN EXISTS (
                       SELECT 1 FROM scheduled_task_webhook_pending
-                      WHERE task_id IS ${row.task_id} AND state = 'running'
+                      WHERE task_id IS NOT DISTINCT FROM ${row.task_id} AND state = 'running'
                         AND delivery_id = scheduled_tasks.last_run_webhook_delivery_id
                     ) THEN 0 ELSE 1 END
-                WHERE task_id IS ${row.task_id} AND last_run_status = 'running'
+                WHERE task_id IS NOT DISTINCT FROM ${row.task_id} AND last_run_status = 'running'
               `;
               return;
             }
@@ -1395,10 +1395,10 @@ export const layer = Layer.effect(
                   updated_at = ${iso(now)},
                   run_count = run_count + CASE WHEN EXISTS (
                     SELECT 1 FROM scheduled_task_webhook_pending
-                    WHERE task_id IS ${row.task_id} AND state = 'running'
+                    WHERE task_id IS NOT DISTINCT FROM ${row.task_id} AND state = 'running'
                         AND delivery_id = scheduled_tasks.last_run_webhook_delivery_id
                   ) THEN 0 ELSE 1 END
-              WHERE task_id IS ${row.task_id} AND last_run_status = 'running'
+              WHERE task_id IS NOT DISTINCT FROM ${row.task_id} AND last_run_status = 'running'
             `;
           }),
         { concurrency: 1, discard: true },

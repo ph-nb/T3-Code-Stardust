@@ -2,6 +2,7 @@ import { PRIMARY_LOCAL_ENVIRONMENT_ID, type DesktopEnvironmentBootstrap } from "
 import * as Schema from "effect/Schema";
 
 import { isLocalEnvironmentDisabled } from "../../localEnvironment";
+import { readNativeDesktopBootstrap } from "../../nativeDesktop";
 import { msg } from "gt-react";
 import { m } from "../../i18n/messages";
 
@@ -293,6 +294,15 @@ export function resolvePrimaryEnvironmentHttpUrl(
 
 /** Null only for desktop with its local environment disabled; other hosts fall back to page origin. */
 export function readPrimaryEnvironmentTarget(): PrimaryEnvironmentTarget | null {
+  const native = readNativeDesktopBootstrap();
+  if (native)
+    return {
+      source: "desktop-managed",
+      target: {
+        httpBaseUrl: native.httpBaseUrl,
+        wsBaseUrl: native.httpBaseUrl.replace(/^http:/, "ws:"),
+      },
+    };
   if (isLocalEnvironmentDisabled()) {
     return null;
   }

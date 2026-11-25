@@ -298,9 +298,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     title: msg("Cleanup preferences"),
     to: "/settings/storage",
     scope: "environment-defaults",
-    searchTerms: [
-      msg("rescue first build folder keep newest rollback copies bak orig"),
-    ],
+    searchTerms: [msg("rescue first build folder keep newest rollback copies bak orig")],
   },
   {
     id: "storage-worktree-keep-when",
@@ -609,13 +607,6 @@ export const SETTINGS_SEARCH_ITEMS = [
     ],
   },
   {
-    id: "guest-links",
-    title: msg("Guest links"),
-    to: "/settings/labs",
-    scope: "environment",
-    searchTerms: [msg("beta share guest invite link teammate watch t3 connect tunnel")],
-  },
-  {
     id: "linked-environments-beta",
     title: msg("Linked environments"),
     to: "/settings/labs",
@@ -817,7 +808,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     to: "/settings/general",
     searchTerms: [
       msg(
-      // oxlint-disable-next-line t3code/no-hardcoded-ui-han -- search keywords in every supported language
+        // oxlint-disable-next-line t3code/no-hardcoded-ui-han -- search keywords in every supported language
         "locale translation english deutsch german español spanish français french português portuguese brasil brazilian chinese 中文 japanese 日本語 korean 한국어 russian русский swedish svenska sprache idioma langue 语言 言語 언어 язык",
       ),
     ],
@@ -1057,13 +1048,6 @@ export const SETTINGS_SEARCH_ITEMS = [
     to: "/settings/about",
     primaryEnvironmentOnly: true,
     searchTerms: [msg("onboarding setup first run getting started agents import projects")],
-  },
-  {
-    id: "telemetry-opt-in",
-    title: "Share anonymous usage data",
-    to: "/settings/about",
-    scope: "environment",
-    searchTerms: ["telemetry analytics usage statistics tracking privacy opt in off default"],
   },
   {
     id: "privacy-policy",
@@ -1465,46 +1449,6 @@ export const SETTINGS_SEARCH_ITEMS = [
     windowsOnly: true,
     localBackendManagementOnly: true,
     wslAvailableOnly: true,
-  },
-  {
-    id: "t3-connect",
-    localEnvironmentOnly: true,
-    title: msg("T3 Connect"),
-    to: "/settings/access",
-    targetId: "connections-environment",
-    searchTerms: [msg("managed tunnel cloud other devices remote tunnels limit t3 chat")],
-    desktopOnly: true,
-    cloudOnly: true,
-  },
-  {
-    id: "connect-device-approval",
-    title: msg("Require approval for new devices"),
-    to: "/settings/access",
-    targetId: "connections-environment",
-    searchTerms: [
-      msg("t3 connect devices approve deny trust revoke pairing code security account"),
-    ],
-    cloudOnly: true,
-    managedTunnelOnly: true,
-  },
-  {
-    id: "hold-webhooks-while-offline",
-    localEnvironmentOnly: true,
-    title: msg("Hold webhooks while offline"),
-    to: "/settings/access",
-    targetId: "connections-environment",
-    searchTerms: [msg("webhook automations offline queue mailbox t3 connect")],
-    cloudOnly: true,
-    managedTunnelOnly: true,
-  },
-  {
-    id: "publish-agent-activity",
-    localEnvironmentOnly: true,
-    title: msg("Publish agent activity"),
-    to: "/settings/access",
-    targetId: "connections-environment",
-    searchTerms: [msg("mobile push notifications live activities cloud tunnel")],
-    cloudOnly: true,
   },
   {
     id: "preview-tunnel",

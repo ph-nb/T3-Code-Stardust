@@ -2,8 +2,6 @@ import { RegistryContext } from "@effect/atom-react";
 import {
   AuthOrchestrationOperateScope,
   AuthOrchestrationReadScope,
-  AuthRelayReadScope,
-  AuthRelayWriteScope,
   AuthTerminalOperateScope,
   EnvironmentId,
   ProjectId,
@@ -61,34 +59,6 @@ vi.mock(import("@t3tools/client-runtime/state/session"), async (original) => {
     createEnvironmentSessionAtoms: ((runtime: never) => ({
       ...actual.createEnvironmentSessionAtoms(runtime),
       sessionStateAtom: (id: EnvironmentId) => state.sessions.get(id),
-    })) as never,
-  };
-});
-vi.mock(import("../../cloud/publicConfig"), async (original) => ({
-  ...(await original()),
-  hasCloudPublicConfig: () => state.cloud,
-}));
-vi.mock(import("@clerk/react"), async (original) => ({
-  ...(await original()),
-  useAuth: (() => state.auth) as never,
-}));
-vi.mock(import("../clerk/clerkLoadFailure"), async (original) => ({
-  ...(await original()),
-  useClerkLoadFailed: () => false,
-}));
-vi.mock(import("../clerk/useT3ConnectAuthPrompt"), async (original) => ({
-  ...(await original()),
-  useT3ConnectAuthPrompt: (() => ({ openAuthPrompt: () => {} })) as never,
-}));
-vi.mock(import("../../cloud/cloudLinkState"), async (original) => {
-  const { useAtomValue } = await import("@effect/atom-react");
-  return {
-    ...(await original()),
-    useCloudLinkState: (() => ({
-      data: useAtomValue(state.linkState as Atom.Atom<EnvironmentCloudLinkStateResult | null>),
-      error: state.linkError,
-      isPending: false,
-      refresh: state.refreshLinkState,
     })) as never,
   };
 });
@@ -455,7 +425,7 @@ it("waits for a ready agent to start, and Start without an agent still finishes 
   await using _screen = await mountWelcome();
   expect(button("Import 2 projects and start").disabled).toBe(true);
 
-  await click("Just look around");
+  await click("Start without an agent");
   await vi.waitFor(() => expect(state.onDone).toHaveBeenCalledOnce());
   expect(state.createProject).toHaveBeenCalledTimes(2);
 });
@@ -530,7 +500,7 @@ it("gives projects a later scan finds the default, unless the main box was unche
   const importProjects = document.querySelector<HTMLElement>('[role="checkbox"]');
   await act(async () => importProjects?.click());
   await findProject("/projects/fourth");
-  await vi.waitFor(() => expect(button("Get started").disabled).toBe(false));
+  await vi.waitFor(() => expect(button("Start").disabled).toBe(false));
 });
 
 it("keeps the project choice across a visit to Settings until setup finishes", async () => {
@@ -539,13 +509,13 @@ it("keeps the project choice across a visit to Settings until setup finishes", a
     await using _first = await mountWelcome();
     const importProjects = document.querySelector<HTMLElement>('[role="checkbox"]');
     await act(async () => importProjects?.click());
-    await vi.waitFor(() => expect(button("Get started").disabled).toBe(false));
+    await vi.waitFor(() => expect(button("Start").disabled).toBe(false));
   }
   // Coming back from Settings mounts the page again.
   {
     await using _second = await mountWelcome();
-    expect(button("Get started").disabled).toBe(false);
-    await click("Get started");
+    expect(button("Start").disabled).toBe(false);
+    await click("Start");
     await vi.waitFor(() => expect(state.onDone).toHaveBeenCalledOnce());
     expect(state.createProject).not.toHaveBeenCalled();
   }
@@ -640,7 +610,7 @@ it("keeps saved picks when Start comes before the project list loads", async () 
   state.scanPending = true;
   await using _screen = await mountWelcome();
 
-  await click("Get started");
+  await click("Start");
   await vi.waitFor(() => expect(state.onDone).toHaveBeenCalledOnce());
   // An import a quit cut short is still checked on the next visit.
   expect(localStorage.getItem(welcomeImportSelectionKey(primaryId))).toBe(saved);
@@ -709,7 +679,7 @@ it("keeps an import opt-out on the page when storage cannot save it", async () =
   const importProjects = document.querySelector<HTMLElement>('[role="checkbox"]');
   await act(async () => importProjects?.click());
 
-  await click("Get started");
+  await click("Start");
   await vi.waitFor(() => expect(state.onDone).toHaveBeenCalledOnce());
   expect(state.createProject).not.toHaveBeenCalled();
 });
@@ -752,69 +722,7 @@ it("starts without importing when this connection cannot import projects", async
   await using _screen = await mountWelcome();
   expect(pageText()).not.toContain("Review all");
 
-  await click("Get started");
+  await click("Start");
   await vi.waitFor(() => expect(state.onDone).toHaveBeenCalledOnce());
   expect(state.createProject).not.toHaveBeenCalled();
-});
-
-it("says the phone is set up only once this computer is shared with the signed-in account", async () => {
-  using _now = setup();
-  state.cloud = true;
-  state.auth = { isLoaded: true, isSignedIn: true, userId: "user_1" };
-  appAtomRegistry.set(
-    sessionAtom(primaryId),
-    AsyncResult.success(
-      session([AuthOrchestrationOperateScope, AuthRelayReadScope, AuthRelayWriteScope]),
-    ),
-  );
-  state.linkError = "Could not read T3 Connect link state.";
-  await using _screen = await mountWelcome();
-  await click("Set up");
-  // A failed read says so instead of asking to share the computer again.
-  await vi.waitFor(() => expect(pageText()).toContain("Could not check T3 Connect."));
-  expect(pageText()).not.toContain("Set up T3 Connect");
-
-  state.linkError = null;
-  await act(async () =>
-    appAtomRegistry.set(state.linkState as Atom.Writable<EnvironmentCloudLinkStateResult | null>, {
-      linked: false,
-      cloudUserId: null,
-      relayUrl: null,
-      relayIssuer: null,
-      publishAgentActivity: false,
-    }),
-  );
-  // Signed in, but "Not now" on the share step left this computer unreachable.
-  await vi.waitFor(() => expect(pageText()).toContain("Set up T3 Connect"));
-
-  const share = (reachability: EnvironmentCloudLinkStateResult["reachability"]) =>
-    act(async () =>
-      appAtomRegistry.set(
-        state.linkState as Atom.Writable<EnvironmentCloudLinkStateResult | null>,
-        {
-          linked: true,
-          cloudUserId: "user_1",
-          relayUrl: null,
-          relayIssuer: null,
-          managedTunnelActive: true,
-          publishAgentActivity: true,
-          reachability,
-        },
-      ),
-    );
-  const checkedAt = "2026-01-01T00:00:00.000Z";
-  await share({
-    status: "unreachable",
-    checkedAt,
-    cause: "connector_not_running",
-    reason: "The tunnel is not running.",
-    hint: null,
-    fix: "Turn T3 Connect off and on.",
-  });
-  await vi.waitFor(() => expect(pageText()).toContain("Check T3 Connect"));
-  expect(pageText()).not.toContain("Your phone can reach this computer.");
-
-  await share({ status: "reachable", checkedAt, readyConnections: 4, protocol: "quic" });
-  await vi.waitFor(() => expect(pageText()).toContain("Your phone can reach this computer."));
-  expect(pageText()).not.toContain("Check T3 Connect");
 });

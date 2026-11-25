@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 import type { DesktopUpdateState } from "@t3tools/contracts";
 import {
   communityInstallPhase,
+  communityReleaseTarget,
   communityReleaseNumber,
   communityUpdateActions,
   desktopCanSelfUpdate,
@@ -48,6 +49,29 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe("community release boundaries", () => {
+  it("offers verified assets for the client OS and architecture", () => {
+    const releases = [
+      { platform: "win", arch: "x64", name: "Stardust-1.2.4-win-x64.exe" },
+      { platform: "win", arch: "arm64", name: "Stardust-1.2.4-win-arm64.exe" },
+      { platform: "linux", arch: "x64", name: "Stardust-x86_64.AppImage" },
+      { platform: "linux", arch: "x64", name: "Stardust-1.2.4-linux-x86_64.AppImage" },
+      { platform: "linux", arch: "x64", name: "Stardust-1.2.4-linux-amd64.deb" },
+      { platform: "linux", arch: "arm64", name: "Stardust-1.2.4-linux-arm64.deb" },
+    ] as const;
+    for (const { platform, arch, name } of releases) {
+      const input = {
+        ...stardustRelease("1.2.4"),
+        assets: [{ ...stardustRelease().assets[0], name }],
+      };
+      expect(parseCommunityRelease(input, { platform, arch }).tag).toBe("v1.2.4");
+      expect(() => parseCommunityRelease(stardustRelease(), { platform, arch })).toThrow();
+      expect(() =>
+        parseCommunityRelease(input, { platform, arch: arch === "x64" ? "arm64" : "x64" }),
+      ).toThrow();
+    }
+    expect(communityReleaseTarget("win32", "arm64")).toEqual({ platform: "win", arch: "arm64" });
+    expect(communityReleaseTarget("linux", "x64")).toEqual({ platform: "linux", arch: "x64" });
+  });
   it("compares Stardust semver and legacy community numbers while rejecting upstream v0.x tags", () => {
     expect(communityReleaseNumber("xiaoxin-c100-macos-20261112")).toBe(100);
     expect(communityReleaseNumber("v1.0.0")).toBe(1_010_000);
@@ -60,11 +84,11 @@ describe("community release boundaries", () => {
   });
   it("ignores arbitrary response URLs and builds repository-bound links", () => {
     const r = parseCommunityRelease(stardustRelease("1.2.4"));
-    expect(r.url).toBe("https://github.com/zds-xiaoxin/xiaoxin-t3code/releases/tag/v1.2.4");
+    expect(r.url).toBe("https://github.com/ph-nb/T3-Code-Stardust/releases/tag/v1.2.4");
     expect(r.compareUrl).toContain("compare/v1.2.3...v1.2.4");
     const legacy = parseCommunityRelease(release());
     expect(legacy.url).toBe(
-      "https://github.com/zds-xiaoxin/xiaoxin-t3code/releases/tag/xiaoxin-c48-macos-20261112",
+      "https://github.com/ph-nb/T3-Code-Stardust/releases/tag/xiaoxin-c48-macos-20261112",
     );
   });
   it.each([

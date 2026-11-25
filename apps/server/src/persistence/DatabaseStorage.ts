@@ -18,6 +18,7 @@ import * as ServerConfig from "../config.ts";
 import * as ProjectionMaintenance from "../orchestration-v2/ProjectionMaintenance.ts";
 import * as DatabaseMaintenance from "./DatabaseMaintenance.ts";
 import { forkParked } from "../serverActivation.ts";
+import { isPostgres } from "./SqlDialect.ts";
 
 // Bound each reclaim pass to one minute of churn.
 const RECLAIM_PAGES_PER_PASS = 1024;
@@ -45,6 +46,7 @@ const formatGiB = (bytes: number) => `${(bytes / 1024 ** 3).toFixed(1)} GiB`;
 
 const make = Effect.gen(function* () {
   const sql = yield* SqlClient.SqlClient;
+  const postgres = isPostgres(sql);
   const maintenance = yield* ProjectionMaintenance.ProjectionMaintenanceV2;
   const config = yield* ServerConfig.ServerConfig;
   const fs = yield* FileSystem.FileSystem;
@@ -74,21 +76,29 @@ const make = Effect.gen(function* () {
       }
     | undefined;
   const readLayout = Effect.suspend(() =>
-    layout !== undefined
-      ? Effect.succeed(layout)
-      : Effect.gen(function* () {
-          const size = yield* sql<{ readonly page_size: number }>`PRAGMA page_size`;
-          const mode = yield* sql<{ readonly auto_vacuum: number }>`PRAGMA auto_vacuum`;
-          const autoVacuum = mode[0]?.auto_vacuum ?? 0;
-          layout = {
-            pageSize: size[0]?.page_size ?? 0,
-            autoVacuum,
-            incrementalVacuum: autoVacuum === 2,
-          };
-          return layout;
-        }),
+    postgres
+      ? Effect.succeed({ pageSize: 0, autoVacuum: 1, incrementalVacuum: false })
+      : layout !== undefined
+        ? Effect.succeed(layout)
+        : Effect.gen(function* () {
+            const size = yield* sql<{ readonly page_size: number }>`PRAGMA page_size`;
+            const mode = yield* sql<{ readonly auto_vacuum: number }>`PRAGMA auto_vacuum`;
+            const autoVacuum = mode[0]?.auto_vacuum ?? 0;
+            layout = {
+              pageSize: size[0]?.page_size ?? 0,
+              autoVacuum,
+              incrementalVacuum: autoVacuum === 2,
+            };
+            return layout;
+          }),
   );
   const readPages = Effect.gen(function* () {
+    if (postgres) {
+      const sizes = yield* sql<{ bytes: number }>`
+        SELECT pg_database_size(current_database()) AS bytes
+      `;
+      return { databaseBytes: sizes[0]?.bytes ?? 0, reclaimableBytes: 0, incrementalVacuum: false };
+    }
     const { pageSize, incrementalVacuum } = yield* readLayout;
     const pages = yield* sql<{ readonly page_count: number }>`PRAGMA page_count`;
     const free = yield* sql<{ readonly freelist_count: number }>`PRAGMA freelist_count`;
@@ -106,7 +116,7 @@ const make = Effect.gen(function* () {
       reclaimableBytes,
       incrementalVacuumEnabled: incrementalVacuum,
       compactCommand,
-      canReclaim: restart !== null,
+      canReclaim: !postgres && restart !== null,
       ...(reclaimFailure === undefined ? {} : { reclaimFailure }),
     };
     // Every set reaches each open Storage page; most passes change nothing.
@@ -192,6 +202,11 @@ const make = Effect.gen(function* () {
   );
 
   const requestReclaim = Effect.gen(function* () {
+    if (postgres)
+      return yield* new DatabaseReclaimError({
+        reason:
+          "PostgreSQL manages free space with autovacuum. Use t3 doctor for PostgreSQL maintenance.",
+      });
     if (restart === null || !doctorTargetsThisDatabase) {
       return yield* new DatabaseReclaimError({
         reason: `Stop T3 Code on this machine, then run: ${compactCommand}`,

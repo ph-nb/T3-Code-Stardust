@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Stardust Rust Preview",
+  "version": "0.1.0-preview.5",
+  "identifier": "nb.ph.stardust.rust-preview",
+  "build": { "frontendDist": "../../../../apps/web/dist" },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:* ws://127.0.0.1:* https: wss:; img-src 'self' asset: data: blob: https:; style-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": ["icons/icon.ico", "../../../../apps/desktop/prod-resources/icon.png"]
+  }
+}

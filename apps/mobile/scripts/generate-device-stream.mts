@@ -5,8 +5,11 @@ import { build } from "vite-plus";
 
 const mobileRoot = NodePath.resolve(NodePath.dirname(NodeURL.fileURLToPath(import.meta.url)), "..");
 
-async function generateWebViewScript(feature: string, name: string) {
-  const stem = `${name.toLowerCase()}-stream`;
+async function generateWebViewScript(
+  feature: string,
+  name: string,
+  stem = `${name.toLowerCase()}-stream`,
+) {
   const result = await build({
     configFile: false,
     logLevel: "silent",
@@ -15,8 +18,8 @@ async function generateWebViewScript(feature: string, name: string) {
       target: "es2022",
       minify: true,
       lib: {
-        entry: NodePath.join(mobileRoot, "src/features", feature, `${stem}.browser.ts`),
-        name: `T3${name}Stream`,
+        entry: NodePath.resolve(mobileRoot, "src", feature, `${stem}.browser.ts`),
+        name: name === "StarshipSlider" ? "StardustSlider" : `T3${name}Stream`,
         formats: ["iife"],
       },
     },
@@ -38,5 +41,8 @@ async function generateWebViewScript(feature: string, name: string) {
   }
 }
 
-export const generateDeviceStreamScript = () => generateWebViewScript("devices", "Device");
-export const generatePreviewStreamScript = () => generateWebViewScript("browser", "Preview");
+export const generateDeviceStreamScript = () => generateWebViewScript("features/devices", "Device");
+export const generatePreviewStreamScript = () =>
+  generateWebViewScript("features/browser", "Preview");
+export const generateStarshipSliderScript = () =>
+  generateWebViewScript("components/stardust", "StarshipSlider", "starship-slider");

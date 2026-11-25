@@ -16,7 +16,7 @@ it("keeps modified workbenches on source review and only offers downloads after 
   });
   const originalFetch = globalThis.fetch;
   using request = vi.spyOn(globalThis, "fetch").mockImplementation((input, init) =>
-    String(input).includes("api.github.com/repos/zds-xiaoxin/xiaoxin-t3code/")
+    String(input).includes("api.github.com/repos/ph-nb/T3-Code-Stardust/")
       ? Promise.resolve(
           new Response(
             JSON.stringify({
@@ -24,13 +24,18 @@ it("keeps modified workbenches on source review and only offers downloads after 
               draft: false,
               prerelease: false,
               assets: [
-                {
-                  name: "T3-Stardust-1.2.4-macOS-arm64.zip",
-                  state: "uploaded",
-                  size: 100,
-                  digest: `sha256:${"a".repeat(64)}`,
-                },
-              ],
+                "Stardust-1.2.4-win-x64.exe",
+                "Stardust-1.2.4-win-arm64.exe",
+                "Stardust-1.2.4-linux-x64.AppImage",
+                "Stardust-1.2.4-linux-arm64.AppImage",
+                "Stardust-1.2.4-mac-x64.zip",
+                "Stardust-1.2.4-mac-arm64.zip",
+              ].map((name) => ({
+                name,
+                state: "uploaded",
+                size: 100,
+                digest: `sha256:${"a".repeat(64)}`,
+              })),
             }),
             { status: 200 },
           ),

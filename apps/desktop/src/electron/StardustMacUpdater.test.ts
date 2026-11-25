@@ -210,7 +210,7 @@ describe("StardustMacUpdater check", () => {
       const exit = yield* fixture.run(fixture.service.checkForUpdates);
       expect(Exit.isSuccess(exit)).toBe(true);
       expect(fixture.fetches).toEqual([
-        "https://api.github.com/repos/zds-xiaoxin/xiaoxin-t3code/releases/latest",
+        "https://api.github.com/repos/ph-nb/T3-Code-Stardust/releases/latest",
       ]);
       expect(fixture.events.map((event) => event.name)).toEqual([
         "checking-for-update",
@@ -269,7 +269,7 @@ describe("StardustMacUpdater download", () => {
       expect(Exit.isSuccess(exit)).toBe(true);
 
       expect(fixture.fetches[1]).toBe(
-        "https://github.com/zds-xiaoxin/xiaoxin-t3code/releases/download/v1.2.2/T3-Stardust-v1.2.2-macOS-arm64.zip",
+        "https://github.com/ph-nb/T3-Code-Stardust/releases/download/v1.2.2/T3-Stardust-v1.2.2-macOS-arm64.zip",
       );
       const progress = fixture.events.filter((event) => event.name === "download-progress");
       expect(progress.length).toBe(2);
@@ -336,16 +336,23 @@ describe("StardustMacUpdater download", () => {
 
   it.effect("refuses before downloading when the app cannot replace itself", () =>
     Effect.gen(function* () {
-      const readOnly = makeFixture({ appFolderReadOnly: true });
-      yield* readOnly.run(readOnly.service.checkForUpdates);
-      expect(causeOf(yield* readOnly.run(readOnly.service.downloadUpdate))?.code).toBe(
-        "not-writable",
-      );
-      expect(readOnly.fetches.length).toBe(1);
-      NodeFS.chmodSync(NodePath.dirname(readOnly.currentAppPath), 0o755);
+      // Windows chmod cannot remove directory write access.
+      if (NodePath.sep === "/") {
+        const readOnly = makeFixture({ appFolderReadOnly: true });
+        yield* readOnly.run(readOnly.service.checkForUpdates);
+        expect(causeOf(yield* readOnly.run(readOnly.service.downloadUpdate))?.code).toBe(
+          "not-writable",
+        );
+        expect(readOnly.fetches.length).toBe(1);
+        NodeFS.chmodSync(NodePath.dirname(readOnly.currentAppPath), 0o755);
+      }
 
       const translocated = makeFixture({
-        appPath: (home) => NodePath.join(home, "AppTranslocation", "4D3F", "d", "T3 Stardust.app"),
+        appPath: (home) =>
+          NodePath.join(home, "AppTranslocation", "4D3F", "d", "T3 Stardust.app").replaceAll(
+            NodePath.sep,
+            "/",
+          ),
       });
       yield* translocated.run(translocated.service.checkForUpdates);
       expect(causeOf(yield* translocated.run(translocated.service.downloadUpdate))?.code).toBe(

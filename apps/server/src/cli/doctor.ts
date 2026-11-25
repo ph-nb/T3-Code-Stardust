@@ -2,12 +2,17 @@ import { DATABASE_COMPACTION_RECOMMENDED_BYTES } from "@t3tools/contracts";
 import * as Clock from "effect/Clock";
 import * as Console from "effect/Console";
 import * as Effect from "effect/Effect";
+import * as SqlClient from "effect/sql/SqlClient";
 import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import { Command, Flag, GlobalFlag, Prompt } from "effect/cli";
 
 import * as BootService from "../cloud/bootService.ts";
 import * as DatabaseMaintenance from "../persistence/DatabaseMaintenance.ts";
+import * as Database from "../persistence/Database.ts";
+import * as StorageConfig from "../persistence/StorageConfig.ts";
+import * as ServerConfig from "../config.ts";
+import { POSTGRES_TABLE_NAMES } from "../persistence/postgres/baseline.ts";
 import * as ServerOwnership from "../serverOwnership.ts";
 import { isProcessAlive, readPersistedServerRuntimeState } from "../serverRuntimeState.ts";
 import { projectLocationFlags, resolveCliAuthConfig } from "./config.ts";
@@ -206,6 +211,28 @@ export const doctorCommand = Command.make("doctor", {
     Effect.gen(function* () {
       const logLevel = yield* GlobalFlag.LogLevel;
       const config = yield* resolveCliAuthConfig(flags, logLevel);
+      const storage = yield* StorageConfig.make();
+      if (storage.backend === "postgres") {
+        return yield* Effect.gen(function* () {
+          const sql = yield* SqlClient.SqlClient;
+          const rows = yield* sql<{ bytes: number; dead_tuples: number }>`
+            SELECT COALESCE(SUM(pg_total_relation_size(relid)), 0) AS bytes,
+              COALESCE(SUM(n_dead_tup), 0) AS dead_tuples
+            FROM pg_stat_user_tables WHERE schemaname = current_schema()
+          `;
+          yield* Console.log(
+            `PostgreSQL: ${formatBytes(rows[0]?.bytes ?? 0)}, approximately ${rows[0]?.dead_tuples ?? 0} dead tuples. Autovacuum manages reusable space.`,
+          );
+          if (flags.fix && !flags.dryRun) {
+            for (const table of POSTGRES_TABLE_NAMES)
+              yield* sql.unsafe(`VACUUM (ANALYZE) "${storage.schema}"."${table}"`);
+            yield* Console.log("PostgreSQL VACUUM (ANALYZE) completed.");
+          }
+        }).pipe(
+          Effect.provide(Database.layerCliConfig),
+          Effect.provideService(ServerConfig.ServerConfig, config),
+        );
+      }
       yield* runDoctor(config, { fix: flags.fix, dryRun: flags.dryRun }).pipe(
         Effect.provide(Layer.merge(DatabaseMaintenance.layer, CliService.layer(config))),
       );

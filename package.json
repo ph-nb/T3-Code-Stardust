@@ -18,6 +18,7 @@
     "start:mock-update-server": "node scripts/mock-update-server.ts",
     "screenshots:mobile": "node scripts/mobile-showcase.ts",
     "icons:export": "node scripts/export-brand-icons.ts",
+    "icons:stardust": "node scripts/export-stardust-icons.mts",
     "icons:check": "node scripts/export-brand-icons.ts --check",
     "i18n:check": "node scripts/i18n-check.ts",
     "licenses:sync": "node scripts/sync-third-party-license-notices.ts",
@@ -60,6 +61,9 @@
     "dist:desktop:win": "node scripts/build-desktop-artifact.ts --platform win --target nsis",
     "dist:desktop:win:arm64": "node scripts/build-desktop-artifact.ts --platform win --target nsis --arch arm64",
     "dist:desktop:win:x64": "node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64",
+    "dist:stardust:windows": "node scripts/build-desktop-artifact.ts --platform win --target nsis --arch x64 --build-version 1.2.3",
+    "dist:stardust:linux": "node scripts/build-desktop-artifact.ts --platform linux --target AppImage --arch x64 --build-version 1.2.3",
+    "dist:stardust:android": "node scripts/build-stardust-android.mjs",
     "release:smoke": "node scripts/release-smoke.ts",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/dist apps/*/dist-electron packages/*/dist .vite-plus apps/*/.vite-plus packages/*/.vite-plus",
     "sync:repos": "node scripts/sync-reference-repos.ts"

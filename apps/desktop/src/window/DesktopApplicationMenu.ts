@@ -5,6 +5,7 @@ import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 
 import type { DesktopUpdateChannel } from "@t3tools/contracts";
+import { DEFAULT_CLIENT_SETTINGS } from "@t3tools/contracts/settings";
 import * as Electron from "electron";
 import { msg } from "gt-i18n";
 
@@ -419,7 +420,9 @@ export const make = Effect.gen(function* () {
     const settings = Option.isSome(settingsService)
       ? yield* settingsService.value.get.pipe(Effect.orElseSucceed(() => Option.none()))
       : Option.none();
-    const language = Option.isSome(settings) ? settings.value.language : "system";
+    const language = Option.isSome(settings)
+      ? settings.value.language
+      : DEFAULT_CLIENT_SETTINGS.language;
     const app = yield* Effect.serviceOption(ElectronApp.ElectronApp);
     const systemLanguage = Option.isSome(app) ? yield* app.value.systemLocale : "en";
     const locale = (language === "system" ? systemLanguage : language).startsWith("zh")
@@ -430,13 +433,12 @@ export const make = Effect.gen(function* () {
 
   // Load the saved language before the first build so the menu never starts in English.
   const applySavedLanguage = Effect.gen(function* () {
-    if (Option.isNone(clientSettings)) return;
-    const saved = yield* clientSettings.value.get.pipe(Effect.orElseSucceed(() => Option.none()));
-    if (Option.isSome(saved)) {
-      yield* applyLanguage(saved.value.language).pipe(
-        Effect.provideService(ElectronApp.ElectronApp, electronApp),
-      );
-    }
+    const saved = Option.isSome(clientSettings)
+      ? yield* clientSettings.value.get.pipe(Effect.orElseSucceed(() => Option.none()))
+      : Option.none();
+    yield* applyLanguage(
+      Option.isSome(saved) ? saved.value.language : DEFAULT_CLIENT_SETTINGS.language,
+    ).pipe(Effect.provideService(ElectronApp.ElectronApp, electronApp));
   });
 
   let rebuildsOnLocaleChange = false;

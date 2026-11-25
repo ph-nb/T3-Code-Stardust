@@ -3,12 +3,25 @@ import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 import {
   buildHostedPairingUrl,
   hasHostedPairingRequest,
+  isHostedStaticApp,
   readHostedPairingRequest,
 } from "./hostedPairing";
 
 describe("hostedPairing", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
+  });
+
+  it("opens the bundled native client without authenticating against its asset origin", () => {
+    vi.stubEnv("VITE_HTTP_URL", "");
+    vi.stubEnv("VITE_WS_URL", "");
+    vi.stubEnv("VITE_HOSTED_APP_CHANNEL", "");
+    for (const origin of ["http://tauri.localhost", "tauri://localhost"]) {
+      expect(isHostedStaticApp(new URL(origin))).toBe(true);
+    }
+    for (const origin of ["http://localhost:3773", "https://tauri.localhost.example.com"]) {
+      expect(isHostedStaticApp(new URL(origin))).toBe(false);
+    }
   });
 
   it("reads hosted pairing host and query token parameters", () => {

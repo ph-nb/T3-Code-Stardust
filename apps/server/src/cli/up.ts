@@ -280,7 +280,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
       }, or use --yes for the default. See \`t3 up --help\`.`,
     });
   }
-  if (routes.connect && !current.connect) yield* requireConnectAllowed;
+  if (routes.connect && !current.connect) return yield* requireConnectAllowed;
   if (routes.lan && !current.lan) {
     const policy = yield* ManagedPolicy.ManagedPolicy;
     if (!ManagedLimits.allowsRemoteClients(policy)) {
@@ -442,7 +442,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
       }
     }
   }
-  if (started && routes.connect && !current.connect) yield* waitForReachability();
+  if (started && routes.connect && !current.connect) return yield* waitForReachability();
 
   const after = yield* readSetup();
   yield* Console.log(

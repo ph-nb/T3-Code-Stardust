@@ -23,7 +23,7 @@ import * as EnvironmentAuth from "../auth/EnvironmentAuth.ts";
 import * as ServerSecretStore from "../auth/ServerSecretStore.ts";
 
 import * as ServerConfig from "../config.ts";
-import * as SqlitePersistence from "../persistence/Sqlite.ts";
+import * as Database from "../persistence/Database.ts";
 import type * as RuntimeLayer from "../orchestration-v2/runtimeLayer.ts";
 import * as ProjectEnrichmentService from "../project/ProjectEnrichmentService.ts";
 import * as ProjectFaviconResolver from "../project/ProjectFaviconResolver.ts";
@@ -212,7 +212,7 @@ const makeProjectCliRuntimeLayer = (layerProjectService: typeof RuntimeLayer.lay
       ),
     ),
     // Built after acquireServerOwnership; layerCliConfig would contend with this process's own lock.
-    Layer.provideMerge(SqlitePersistence.layerConfig),
+    Layer.provideMerge(Database.layerConfig),
   );
 
 const normalizeWorkspaceRootForProjectCommand = Effect.fn(

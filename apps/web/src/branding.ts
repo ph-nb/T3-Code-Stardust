@@ -1,4 +1,3 @@
-import { uiText } from "./i18n";
 import type { DesktopAppBranding } from "@t3tools/contracts";
 import {
   formatAppDisplayName,
@@ -23,7 +22,8 @@ export const HOSTED_APP_CHANNEL =
 export const HOSTED_APP_CHANNEL_LABEL = resolveHostedAppChannelLabel(HOSTED_APP_CHANNEL);
 export function appBaseName(): string {
   const name = injectedDesktopAppBranding?.baseName;
-  return !name || name === uiText("T3 Stardust", undefined, "zh-CN") ? uiText("T3 Stardust") : name;
+  // oxlint-disable-next-line t3code/no-untranslated-copy -- Stardust is the product name in every locale.
+  return !name || /^(T3 Code|T3 Stardust)$/.test(name) ? "Stardust" : name;
 }
 // Set by the stable release build (VITE_RELEASE_CHANNEL=stable). Such a build hides the Nightly
 // stage even though it carries the upstream nightly version stamp.
@@ -45,6 +45,6 @@ export function appDisplayName(): string {
     : formatAppDisplayName({ baseName: appBaseName(), stageLabel: APP_STAGE_LABEL });
 }
 export const APP_VERSION = import.meta.env.APP_VERSION || "0.0.0";
-export const DESKTOP_DOWNLOAD_URL = "https://github.com/zds-xiaoxin/xiaoxin-t3code/releases";
+export const DESKTOP_DOWNLOAD_URL = "https://github.com/ph-nb/T3-Code-Stardust/releases";
 // Redirects to the App Store or Google Play to match the phone that opens it.
-export const MOBILE_APP_URL = "https://github.com/zds-xiaoxin/xiaoxin-t3code";
+export const MOBILE_APP_URL = "https://github.com/ph-nb/T3-Code-Stardust";

@@ -4925,7 +4925,10 @@ it.layer(layerTest)("ProjectionStoreV2", (it) => {
           statement.includes("item.inline_work_output = 1"),
         );
         assert.lengthOf(payloadScans, 1);
-        assert.include(payloadScans[0], "item.run_id IS json_extract(wanted.value, '$.id')");
+        assert.include(
+          payloadScans[0],
+          "item.run_id IS NOT DISTINCT FROM json_extract(wanted.value, '$.id')",
+        );
       }
       // Until its run is scanned, a cursor on inline output is hidden inside a work group.
       yield* sql`UPDATE orchestration_v2_projection_turn_items SET type = 'dynamic_tool',

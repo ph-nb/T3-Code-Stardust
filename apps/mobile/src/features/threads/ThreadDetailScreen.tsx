@@ -979,6 +979,7 @@ function ThreadDetailBody(
   const composerOverlapHeight =
     composerHeight ??
     COMPOSER_COLLAPSED_CHROME +
+      (!props.draftMode && !isProviderSubagent ? 44 : 0) +
       (!isProviderSubagent && (deviceType === "pad" || hasSidebarTabBar) ? 14 : 0) +
       composerBottomInset;
   // The last collapse toggle; it only applies to the request it was made on.

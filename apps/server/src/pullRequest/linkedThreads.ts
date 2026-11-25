@@ -39,18 +39,18 @@ export const listLinkedPullRequestThreads = Effect.fn("listLinkedPullRequestThre
       SELECT t.thread_id AS id, t.project_id AS "projectId", t.title,
         t.archived_at AS "archivedAt",
         (json_extract(t.payload_json, '$.settledAt') IS NOT NULL
-          OR json_extract(t.payload_json, '$.settledOverride') IS 'settled') AS settled,
+          OR json_extract(t.payload_json, '$.settledOverride') IS NOT DISTINCT FROM 'settled') AS settled,
         json_extract(link.value, '$.host') AS host,
         json_extract(link.value, '$.repository') AS repository,
         json_extract(link.value, '$.number') AS number,
         json_extract(link.value, '$.url') AS url,
         t.updated_at AS "updatedAt"
       FROM orchestration_v2_projection_threads AS t
-      JOIN json_each(t.payload_json, '$.pullRequests') AS link
+      JOIN json_each(t.payload_json, '$.pullRequests') AS link ON true
       WHERE json_extract(link.value, '$.number') = ${key.number}
         AND json_extract(link.value, '$.source') != 'stack-dismissed'
         AND t.deleted_at IS NULL
-        AND json_extract(t.payload_json, '$.lineage.sideChat') IS NOT 1
+        AND CAST(json_extract(t.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
       ORDER BY "updatedAt" DESC, id ASC
     `.pipe(NodeSqliteClient.readOnly);
     const threads = rows

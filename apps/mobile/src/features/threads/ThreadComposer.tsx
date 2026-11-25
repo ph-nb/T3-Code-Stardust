@@ -40,7 +40,6 @@ import {
 import Animated, { FadeIn, FadeOut, ReduceMotion } from "react-native-reanimated";
 import { useUniwindTheme } from "../../lib/useUniwindTheme";
 import { themeColorWithAlpha } from "../../lib/mobileTheme";
-import { armAgentAwarenessLiveActivityForLocalWork } from "../agent-awareness/remoteRegistration";
 import { scopedThreadKey } from "../../lib/scopedEntities";
 import {
   getComposerDraftSnapshot,
@@ -82,6 +81,7 @@ import {
 } from "../../components/ComposerToolbar";
 import { formatTokens } from "@t3tools/shared/usageFormat";
 import { ComposerModelControl } from "../../components/ComposerModelControl";
+import { ThreadSessionStatsDock } from "../../components/stardust/ThreadSessionStatsDock";
 import {
   composerStripAttachments,
   type DraftComposerFileAttachment,
@@ -581,11 +581,6 @@ export const ThreadComposer = function ThreadComposer(props: ThreadComposerProps
     }
     if (sent.value === null) return;
     // Arm after send so preference reads and native Activity startup do not delay tap-frame feedback.
-    armAgentAwarenessLiveActivityForLocalWork({
-      environmentId: props.environmentId,
-      threadTitle: props.selectedThread.title,
-      projectTitle: props.environmentLabel ?? "T3 Code",
-    });
   };
 
   const nativeImageSubmit = useSubmitAfterNativeImages({
@@ -1137,6 +1132,12 @@ export const ThreadComposer = function ThreadComposer(props: ThreadComposerProps
             </ComposerDictationToolbar>
           </Animated.View>
         </ComposerSurface>
+
+        {!props.isDraft && !props.hidden ? (
+          <ThreadSessionStatsDock
+            threadRef={{ environmentId: props.environmentId, threadId: props.selectedThread.id }}
+          />
+        ) : null}
 
         {props.connectionState === "connected" && operateDenied ? (
           <Text className="pt-2 text-xs text-foreground-muted">

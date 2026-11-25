@@ -1,3 +1,4 @@
+import { indexedBy, isPostgres } from "../persistence/SqlDialect.ts";
 import * as NodeSqliteClient from "@t3tools/shared/nodeSqliteClient";
 import * as Context from "effect/Context";
 import * as DateTime from "effect/DateTime";
@@ -80,7 +81,7 @@ export const layer: Layer.Layer<ProjectionMaintenanceV2, never, SqlClient.SqlCli
       for (let cursor = afterSequence; cursor < throughSequence;) {
         const windowEnd = Math.min(cursor + REFERENCE_SCAN_WINDOW, throughSequence);
         const rows = yield* sql<{ readonly prompt_sequence: number }>`
-          SELECT json_extract(payload_json, '$.promptSequence') AS prompt_sequence
+          SELECT CAST(json_extract(payload_json, '$.promptSequence') AS BIGINT) AS prompt_sequence
           FROM orchestration_events
           WHERE sequence > ${cursor}
             AND sequence <= ${windowEnd}
@@ -102,7 +103,7 @@ export const layer: Layer.Layer<ProjectionMaintenanceV2, never, SqlClient.SqlCli
       const referenced = yield* readPromptReferences(throughSequence, head, betweenPages);
       // Stream heads at or below the boundary are kept, so the anchors they borrow must stay too.
       const keptHeadReferences = yield* sql<{ readonly prompt_sequence: number }>`
-        SELECT json_extract(event.payload_json, '$.promptSequence') AS prompt_sequence
+        SELECT CAST(json_extract(event.payload_json, '$.promptSequence') AS BIGINT) AS prompt_sequence
         FROM (
           SELECT MAX(sequence) AS sequence FROM orchestration_events
           GROUP BY aggregate_kind, stream_id
@@ -158,7 +159,7 @@ export const layer: Layer.Layer<ProjectionMaintenanceV2, never, SqlClient.SqlCli
                   CASE
                     WHEN event_type IN ('subagent.updated', 'turn-item.updated')
                       AND json_type(payload_json, '$.promptSequence') = 'integer'
-                    THEN json_extract(payload_json, '$.promptSequence')
+                    THEN CAST(json_extract(payload_json, '$.promptSequence') AS BIGINT)
                   END AS prompt_sequence
                 FROM orchestration_events
                 WHERE sequence > ${referencesThrough}
@@ -201,7 +202,7 @@ export const layer: Layer.Layer<ProjectionMaintenanceV2, never, SqlClient.SqlCli
                 AND legacy_import.transcript_imported_at IS NOT NULL
             ) AS imported
           FROM orchestration_events AS event
-            INDEXED BY idx_orchestration_events_application_sequence
+            ${indexedBy(sql, "idx_orchestration_events_application_sequence")}
           WHERE event.application_event_version = 1
             AND event.sequence > ${cursor}
             AND event.sequence <= ${throughSequence}
@@ -298,8 +299,12 @@ export const layer: Layer.Layer<ProjectionMaintenanceV2, never, SqlClient.SqlCli
         );
         deletedEventCount += legacy.deletedEventCount;
 
-        const freelistRows = yield* sql<{ readonly freelist_count: number }>`PRAGMA freelist_count`;
-        const pageSizeRows = yield* sql<{ readonly page_size: number }>`PRAGMA page_size`;
+        const freelistRows = isPostgres(sql)
+          ? []
+          : yield* sql<{ readonly freelist_count: number }>`PRAGMA freelist_count`;
+        const pageSizeRows = isPostgres(sql)
+          ? []
+          : yield* sql<{ readonly page_size: number }>`PRAGMA page_size`;
         const reclaimableBytes =
           (freelistRows[0]?.freelist_count ?? 0) * (pageSizeRows[0]?.page_size ?? 0);
 

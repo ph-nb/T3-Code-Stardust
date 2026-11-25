@@ -31,18 +31,18 @@ export const listLinkedIssueThreads = Effect.fn("listLinkedIssueThreads")(
       SELECT t.thread_id AS id, t.project_id AS "projectId", t.title,
         t.archived_at AS "archivedAt",
         (json_extract(t.payload_json, '$.settledAt') IS NOT NULL
-          OR json_extract(t.payload_json, '$.settledOverride') IS 'settled') AS settled,
+          OR json_extract(t.payload_json, '$.settledOverride') IS NOT DISTINCT FROM 'settled') AS settled,
         json_extract(link.value, '$.tracker') AS tracker,
         json_extract(link.value, '$.host') AS host,
         json_extract(link.value, '$.scope') AS scope,
         json_extract(link.value, '$.key') AS key,
         t.updated_at AS "updatedAt"
       FROM orchestration_v2_projection_threads AS t
-      JOIN json_each(t.payload_json, '$.issues') AS link
+      JOIN json_each(t.payload_json, '$.issues') AS link ON true
       WHERE t.deleted_at IS NULL
         AND CASE WHEN json_extract(link.value, '$.key') = ${key.key.trim()}
-          THEN json_extract(t.payload_json, '$.lineage.sideChat') IS NOT 1
-          ELSE 0
+          THEN CAST(json_extract(t.payload_json, '$.lineage.sideChat') AS BIGINT) IS DISTINCT FROM 1
+          ELSE false
         END
       ORDER BY "updatedAt" DESC, id ASC
     `.pipe(NodeSqliteClient.readOnly);

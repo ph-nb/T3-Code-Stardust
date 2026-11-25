@@ -196,9 +196,7 @@ export function ComposerSurface(props: {
   // Animate every native frame or glass and content jump to final height inside the clip.
   return (
     <Animated.View
-      className={
-        Platform.OS === "android" ? undefined : "shadow-[0_6px_28px] shadow-adaptive-black-a15-a35"
-      }
+      className="shadow-[0_6px_28px] shadow-adaptive-black-a15-a35"
       layout={layoutTransition}
       style={[
         animatedShapeStyle,
